@@ -1,0 +1,95 @@
+/* App Styesheets */
+.table th {
+    text-align: center;
+}
+
+[class*=sidebar-light-] .nav-treeview>.nav-item>.nav-link:hover {
+    background-color: rgba(0, 0, 0, .2);
+    color: #212529;
+}
+
+.accordion .card-header .btn {
+    font-weight: normal;
+    color: inherit;
+    padding: 0;
+}
+
+.form-group .select2 {
+    width: 100% !important;
+}
+
+.table-sm td,
+.table-sm th {
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.table tr.empty td {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.table.info td {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 1px 3px;
+}
+
+.pos-editor #product-list input {
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #888;
+}
+
+ul.timeline {
+    list-style-type: none;
+    position: relative;
+}
+
+ul.timeline:before {
+    content: ' ';
+    background: #d4d9df;
+    display: inline-block;
+    position: absolute;
+    left: 14px;
+    width: 2px;
+    height: 100%;
+    z-index: 400;
+}
+
+ul.timeline>li {
+    margin: 20px 0;
+    padding-left: 40px;
+}
+
+ul.timeline>li:before {
+    content: ' ';
+    background: white;
+    display: inline-block;
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid #22c0e8;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    z-index: 400;
+}
+
+ul.timeline .timeline-title {
+    font-weight: bold;
+}
+
+.custom-select {
+    min-width: 150px !important;
+}
+
+.nav-item.spacer {
+    border: none;
+    border-top: 1px solid #ddd;
+}
