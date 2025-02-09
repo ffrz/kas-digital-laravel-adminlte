@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('cash_accounts', function (Blueprint $table) {
             $table->id();
             $table->boolean('active')->default(false);
-            $table->unsignedTinyInteger('type');
+            $table->enum('type', ['bank', 'cash']);
             $table->string('name')->unique();
-            $table->string('number', 20);
-            $table->string('bank');
+            $table->string('bank')->default('');
+            $table->string('bank_account_number', 20)->default('');
+            $table->string('bank_account_name')->default('');
             $table->decimal('balance', 18, 2);
-            $table->text('notes')->nullabel()->default(null);
+            $table->text('notes')->nullable()->default('');
             $table->timestamps();
         });
     }

@@ -51,7 +51,7 @@
                 <label for="radioPrimary1">Pemasukan
                 </label>
               </div>
-              <div class="icheck-primary d-inline">
+              <div class="icheck-primary d-inline mr-2">
                 <input id="radioPrimary2" name="type" type="radio" value="expense"
                   {{ old('type', $item->type) == 'expense' ? 'checked' : '' }}>
                 <label for="radioPrimary2">Pengeluaran

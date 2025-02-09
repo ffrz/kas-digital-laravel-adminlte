@@ -15,10 +15,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        Schema::disableForeignKeyConstraints();
-        User::truncate();
-        Schema::enableForeignKeyConstraints();
-
         User::insert([
             'username' => 'admin',
             'password' => Hash::make('12345'),

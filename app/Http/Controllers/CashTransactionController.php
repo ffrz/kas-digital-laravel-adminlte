@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CashAccount;
 use App\Models\CashTransaction;
 use App\Models\CashTransactionCategory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -14,15 +15,65 @@ class CashTransactionController extends Controller
 {
     public function index(Request $request)
     {
+        $filter_active = false;
         $filter = [
             'account_id' => (int)$request->get('account_id', $request->session()->get('cash-transaction.filter.account_id', -1)),
+            'category_id' => (int)$request->get('category_id', $request->session()->get('cash-transaction.filter.category_id', -1)),
+            'period' => $request->get('period', $request->session()->get('cash-transaction.filter.period', 'all')),
+            'type' => $request->get('type', $request->session()->get('cash-transaction.filter.type', 'all')),
             'search' => $request->get('search', $request->session()->get('cash-transaction.filter.search', '')),
         ];
 
         $q = CashTransaction::with(['account', 'category']);
         if ($filter['account_id'] > 0) {
+            $filter_active = true;
             $q->where('account_id', '=', $filter['account_id']);
         }
+
+        if ($filter['category_id'] > 0) {
+            $filter_active = true;
+            $q->where('category_id', '=', $filter['category_id']);
+        }
+
+        if ($filter['type'] != 'all') {
+            $filter_active = true;
+            if ($filter['type'] == 'income') {
+                $q->where('amount', '>', 0);
+            } else if ($filter['type'] == 'expense') {
+                $q->where('amount', '<', 0);
+            }
+        }
+
+        if ($filter['period'] !== 'all') {
+            $filter_active = true;
+
+            switch ($filter['period']) {
+                case 'today':
+                    $q->whereDate('date', Carbon::today());
+                    break;
+
+                case 'yesterday':
+                    $q->whereDate('date', Carbon::yesterday());
+                    break;
+
+                case 'this_week':
+                    $q->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+
+                case 'prev_week':
+                    $q->whereBetween('date', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()]);
+                    break;
+
+                case 'this_month':
+                    $q->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
+                    break;
+
+                case 'prev_month':
+                    $q->whereBetween('date', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                    break;
+            }
+        }
+
 
         if (!empty($filter['search'])) {
             $q->where('description', 'like', '%' . $filter['search'] . '%');
@@ -30,9 +81,11 @@ class CashTransactionController extends Controller
 
         $request->session()->put('cash-transaction.filter.account_id', $filter['account_id']);
         $items = $q->orderBy('id', 'desc')->paginate(10);
-        $accounts = CashAccount::all();
 
-        return view('pages.cash-transaction.index', compact('items', 'accounts', 'filter'));
+        $accounts = CashAccount::all();
+        $categories = CashTransactionCategory::all();
+
+        return view('pages.cash-transaction.index', compact('items', 'accounts', 'filter', 'filter_active', 'categories'));
     }
 
     public function edit(Request $request, $id = 0)

@@ -3,18 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\AclResource;
 use App\Models\CashTransactionCategory;
-use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CashTransactionCategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = CashTransactionCategory::orderBy('name', 'asc')->get();
-        return view('pages.cash-transaction-category.index', compact('items'));
+        $filter = [
+            'search' => $request->get('search', ''),
+        ];
+
+        $q = CashTransactionCategory::query();
+
+        if (!empty($filter['search'])) {
+            $q->where('name', 'like', '%' . $filter['search'] . '%');
+            $q->orWhere('description', 'like', '%' . $filter['search'] . '%');
+        }
+
+        $items = $q->orderBy('name', 'asc')->paginate(10);
+
+        return view('pages.cash-transaction-category.index', compact('items', 'filter'));
     }
 
     public function edit(Request $request, $id = 0)
@@ -27,7 +37,7 @@ class CashTransactionCategoryController extends Controller
 
         if ($request->method() == 'POST') {
             $validator = Validator::make($request->all(), [
-                'T' => 'required|unique:cash_transaction_categories,name,' . $request->id . '|max:100',
+                'name' => 'required|unique:cash_transaction_categories,name,' . $request->id . '|max:100',
             ]);
 
             if ($validator->fails()) {

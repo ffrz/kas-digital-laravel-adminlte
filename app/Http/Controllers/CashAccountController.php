@@ -11,10 +11,34 @@ use Illuminate\Support\Facades\Validator;
 
 class CashAccountController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = CashAccount::orderBy('name', 'asc')->get();
-        return view('pages.cash-account.index', compact('items'));
+        $filter_active = false;
+        $filter = [
+            'search' => $request->get('search', ''),
+            'active' => $request->get('active', 'all'),
+            'type' => $request->get('type', 'all'),
+        ];
+
+        $q = CashAccount::query();
+
+        if (!empty($filter['search'])) {
+            $q->where('name', 'like', '%' . $filter['search'] . '%');
+            $q->orWhere('bank', 'like', '%' . $filter['search'] . '%');
+            $q->orWhere('bank_account_name', 'like', '%' . $filter['search'] . '%');
+            $q->orWhere('bank_account_number', 'like', '%' . $filter['search'] . '%');
+        }
+        if ($filter['active'] != 'all') {
+            $filter_active = true;
+            $q->where('active', '=', $filter['active']);
+        }
+        if ($filter['type'] != 'all') {
+            $filter_active = true;
+            $q->where('type', '=', $filter['type']);
+        }
+        $items = $q->orderBy('name', 'asc')->paginate(10);
+
+        return view('pages.cash-account.index', compact('items', 'filter', 'filter_active'));
     }
 
     public function edit(Request $request, $id = 0)

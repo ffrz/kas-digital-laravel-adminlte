@@ -9,14 +9,6 @@
     'form_action' => url('cash-transaction-category/edit/' . (int) $item->id),
 ])
 
-@section('right-menu')
-  <li class="nav-item">
-    <button type="submit" class="btn btn-primary mr-1"><i class="fas fa-save mr-1"></i> Simpan</button>
-    <a onclick="return confirm('Batalkan perubahan?')" class="btn btn-default"
-      href="{{ url('cash-transaction-category/') }}"><i class="fas fa-cancel mr-1"></i>Batal</a>
-  </li>
-@endSection
-
 @section('content')
   <div class="row">
     <div class="col-md-4">
@@ -37,6 +29,11 @@
             <input type="text" class="form-control @error('description') is-invalid @enderror" autofocus
               id="description" placeholder="Uraikan dengan deskripsi" name="description"
               value="{{ old('description', $item->description) }}">
+          </div>
+          <div class="mt-4">
+            <button type="submit" class="btn btn-primary mr-1"><i class="fas fa-save mr-1"></i> Simpan</button>
+            <a onclick="return confirm('Batalkan perubahan?')" class="btn btn-default"
+              href="{{ url('cash-transaction-category/') }}"><i class="fas fa-cancel mr-1"></i>Batal</a>
           </div>
         </div>
       </div>

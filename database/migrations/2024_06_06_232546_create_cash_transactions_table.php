@@ -21,8 +21,8 @@ return new class extends Migration
             $table->text('notes')->nullable()->default(null);
             $table->timestamps();
 
-            $table->foreign('account_id')->references('id')->on('cash_accounts')->onDelete('restrict');
-            $table->foreign('category_id')->references('id')->on('cash_transaction_categories')->onDelete('restrict');
+            $table->foreign('account_id')->references('id')->on('cash_accounts')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('cash_transaction_categories')->onDelete('set null');
         });
     }
 

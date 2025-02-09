@@ -10,6 +10,6 @@ class CashAccount extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'type', 'bank', 'number', 'balance', 'active', 'notes'
+        'name', 'type', 'bank', 'bank_account_number', 'bank_account_name', 'balance', 'active', 'notes'
     ];
 }

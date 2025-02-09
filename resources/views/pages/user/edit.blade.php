@@ -9,17 +9,9 @@
     'form_action' => url('user/edit/' . (int) $user->id),
 ])
 
-@section('right-menu')
-  <li class="nav-item">
-    <button type="submit" class="btn btn-primary mr-1"><i class="fas fa-save mr-1"></i> Simpan</button>
-    <a onclick="return confirm('Batalkan perubahan?')" class="btn btn-default" href="{{ url('user/') }}"><i
-        class="fas fa-cancel mr-1"></i>Batal</a>
-  </li>
-@endSection
-
 @section('content')
   <div class="row">
-    <div class="col-lg-5">
+    <div class="col-md-6">
       <div class="card card-primary">
         <input type="hidden" name="id" value="{{ (int) $user->id }}">
         <div class="card-body">
@@ -53,20 +45,25 @@
             @enderror
           </div>
           <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input " id="active" name="is_active" value="1"
+            <div class="icheck-primary d-inline">
+              <input type="checkbox" id="active" name="is_active" value="1"
                 {{ old('is_active', $user->is_active) ? 'checked="checked"' : '' }}>
-              <label class="custom-control-label" for="active" title="Akun aktif dapat login">Aktif</label>
+              <label for="active" title="Akun aktif dapat login">Aktif</label>
             </div>
             <div class="text-muted">Akun aktif dapat login.</div>
           </div>
           <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input " id="is_admin" name="is_admin" value="1"
+            <div class="icheck-primary d-inline">
+              <input type="checkbox" id="is_admin" name="is_admin" value="1"
                 {{ old('is_admin', $user->is_admin) ? 'checked="checked"' : '' }}>
-              <label class="custom-control-label" for="is_admin" title="Akun pengguna pengelola">Administrator</label>
+              <label for="is_admin" title="Akun pengguna pengelola">Administrator</label>
             </div>
             <p class="text-muted">Akun administrator memiliki hak akses penuh pada sistem.</p>
+          </div>
+          <div class="mt-4">
+            <button type="submit" class="btn btn-primary mr-1"><i class="fas fa-save mr-1"></i> Simpan</button>
+            <a onclick="return confirm('Batalkan perubahan?')" class="btn btn-default" href="{{ url('user/') }}"><i
+                class="fas fa-cancel mr-1"></i>Batal</a>
           </div>
         </div>
       </div>

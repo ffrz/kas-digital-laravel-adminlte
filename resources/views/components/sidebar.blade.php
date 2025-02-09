@@ -38,7 +38,7 @@
         <li class="nav-item">
           <a class="nav-link {{ $nav_active == 'cash-account' ? 'active' : '' }}" href="{{ url('cash-account') }}">
             <i class="nav-icon fas fa-money-check"></i>
-            <p>Akun / Rek</p>
+            <p>Akun / Rekening</p>
           </a>
         </li>
         {{-- End of Expense Menu --}}
