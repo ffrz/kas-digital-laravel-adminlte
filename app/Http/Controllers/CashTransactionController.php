@@ -115,7 +115,6 @@ class CashTransactionController extends Controller
 
             DB::beginTransaction();
 
-            $data = ['Old Data' => $item->toArray()];
             if ($item->account) {
                 $item->account->balance -= $item->amount;
                 $item->account->save();
@@ -140,11 +139,75 @@ class CashTransactionController extends Controller
             $account->save();
             DB::commit();
 
-            return redirect('cash-transaction')->with('info', 'Kategori transaksi telah disimpan.');
+            return redirect('cash-transaction')->with('info', 'Transaksi telah disimpan.');
         }
         $categories = CashTransactionCategory::orderBy('id', 'asc')->get();
         $accounts = CashAccount::where('active', '=', 1)->orderBy('name', 'asc')->get();
         return view('pages.cash-transaction.edit', compact('item', 'categories', 'accounts'));
+    }
+
+    public function transfer(Request $request)
+    {
+        $from = new CashTransaction();
+        $from->date = current_date();
+
+        $to = new CashTransaction();
+        $to->date = $from->date;
+
+        if ($request->method() == 'POST') {
+            $data = $request->all();
+            $data['amount'] = abs(number_from_input($request->amount));
+            if (empty($data['category_id'])) {
+                $data['category_id'] = null;
+            }
+            
+            $validator = Validator::make($data, [
+                'date' => 'required|date',
+                'from_account_id' => 'required|exists:cash_accounts,id',
+                'to_account_id' => 'required|exists:cash_accounts,id|different:from_account_id',
+                'description' => 'required|string',
+                'amount' => 'required|numeric|gt:0',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withInput()->withErrors($validator);
+            }
+
+            DB::beginTransaction();
+
+            try {
+                $from->fill($data);
+                $from->account_id = $data['from_account_id'];
+                $from->amount = -$data['amount'];
+                $from->save();
+
+                $to->fill($data);
+                $to->account_id = $data['to_account_id'];
+                $to->amount = $data['amount'];
+                $to->save();
+
+                $fromAccount = CashAccount::findOrFail($from->account_id);
+                $toAccount = CashAccount::findOrFail($to->account_id);
+
+                $fromAccount->balance -= $data['amount'];
+                $toAccount->balance += $data['amount'];
+
+                $fromAccount->save();
+                $toAccount->save();
+
+                DB::commit();
+
+                return redirect('cash-transaction')->with('info', 'Transaksi transfer telah disimpan.');
+            } catch (\Exception $e) {
+                dd($e);
+                DB::rollBack();
+                return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            }
+        }
+
+        $categories = CashTransactionCategory::orderBy('id', 'asc')->get();
+        $accounts = CashAccount::where('active', '=', 1)->orderBy('name', 'asc')->get();
+        return view('pages.cash-transaction.transfer', compact('from', 'to', 'categories', 'accounts'));
     }
 
     public function delete($id)

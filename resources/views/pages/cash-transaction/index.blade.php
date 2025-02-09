@@ -13,6 +13,9 @@
     <a class="btn plus-btn btn-primary" href="{{ url('cash-transaction/edit/0') }}" title="Baru">
       <i class="fa fa-plus"></i>
     </a>
+    <a class="btn btn-default" href="{{ url('cash-transaction/transfer') }}" title="Transfer">
+        <i class="fa fa-right-left"></i>
+      </a>
     <button class="btn btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
       <i class="fa fa-filter"></i>
       @if ($filter_active)

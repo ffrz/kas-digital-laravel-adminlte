@@ -80,6 +80,7 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::controller(CashTransactionController::class)->prefix('cash-transaction')->group(function () {
         Route::get('', 'index');
         Route::match(['get', 'post'], 'edit/{id}', 'edit');
+        Route::match(['get', 'post'], 'transfer', 'transfer');
         Route::get('delete/{id}', 'delete');
     });
 

@@ -6,6 +6,7 @@ return [
     'alpha_num' => 'Format :attribute tidak valid, gunakan hanya huruf dan angka.',
     'regex' => 'Format :attribute tidak valid.',
     'unique' => ':attribute sudah digunakan.',
+    'different' => ':attribute tidak boleh sama.',
     'numeric' => ':attribute sudah digunakan.',
     'max' => [
         'string' => ':attribute terlalu panjang, maksimal :max karakter.',
@@ -35,6 +36,9 @@ return [
         'date' => 'Tanggal',
         'description' => 'Deskripsi',
         'category_id' => 'Kategori',
+        'account_id' => 'Akun / Rek',
+        'from_account_id' => 'Akun / Rek',
+        'to_account_id' => 'Akun / Rek',
         'notes' => 'Catatan',
         'amount' => 'Jumlah',
     ],

@@ -1,12 +1,12 @@
 @php
-  $title = ($item->id ? 'Edit' : 'Tambah') . ' Transaksi';
+  $title = 'Transfer Kas';
 @endphp
 
 @extends('layouts.default', [
     'title' => $title,
     'menu_active' => 'finance',
     'nav_active' => 'cash-transaction',
-    'form_action' => url('cash-transaction/edit/' . (int) $item->id),
+    'form_action' => url('cash-transaction/transfer'),
 ])
 
 @section('content')
@@ -17,7 +17,7 @@
           <div class="form-group">
             <label class="col-form-label" for="date">Tanggal:</label>
             <input class="form-control @error('date') is-invalid @enderror" id="date" name="date" type="date"
-              value="{{ old('date', $item->date) }}" autofocus>
+              value="{{ old('date', $from->date) }}" autofocus>
             @error('date')
               <span class="text-danger">
                 {{ $message }}
@@ -25,39 +25,40 @@
             @enderror
           </div>
           <div class="form-group">
-            <label for="account_id">Akun / Rekening</label>
-            <select class="custom-select select2 @error('account_id') is-invalid @enderror" id="account_id"
-              name="account_id">
-              <option value="" {{ !$item->account_id ? 'selected' : '' }}>-- Pilih Akun --</option>
+            <label for="from_account_id">Dari Akun / Rekening Asal</label>
+            <select class="custom-select select2 @error('from_account_id') is-invalid @enderror" id="from_account_id"
+              name="from_account_id">
+              <option value="" {{ !$from->account_id ? 'selected' : '' }}>-- Pilih Akun --</option>
               @foreach ($accounts as $account)
                 <option value="{{ $account->id }}"
-                  {{ old('account_id', $item->account_id) == $account->id ? 'selected' : '' }}>
+                  {{ old('from_account_id', $from->account_id) == $account->id ? 'selected' : '' }}>
                   {{ $account->name }}
                 </option>
               @endforeach
             </select>
-            @error('account_id')
+            @error('from_account_id')
               <span class="text-danger">
                 {{ $message }}
               </span>
             @enderror
           </div>
           <div class="form-group">
-            <label class="col-form-label" for="type">Jenis Transaksi</label>
-            <div class="form-group clearfix">
-              <div class="icheck-primary d-inline mr-2">
-                <input id="radioPrimary1" name="type" type="radio" value="income"
-                  {{ old('type', $item->type) == 'income' ? 'checked' : '' }}>
-                <label for="radioPrimary1">Pemasukan
-                </label>
-              </div>
-              <div class="icheck-primary d-inline mr-2">
-                <input id="radioPrimary2" name="type" type="radio" value="expense"
-                  {{ old('type', $item->type) == 'expense' ? 'checked' : '' }}>
-                <label for="radioPrimary2">Pengeluaran
-                </label>
-              </div>
-            </div>
+            <label for="to_account_id">Ke Akun / Rekening Tujuan</label>
+            <select class="custom-select select2 @error('to_account_id') is-invalid @enderror" id="to_account_id"
+              name="to_account_id">
+              <option value="" {{ !$to->account_id ? 'selected' : '' }}>-- Pilih Akun --</option>
+              @foreach ($accounts as $account)
+                <option value="{{ $account->id }}"
+                  {{ old('to_account_id', $to->account_id) == $account->id ? 'selected' : '' }}>
+                  {{ $account->name }}
+                </option>
+              @endforeach
+            </select>
+            @error('to_account_id')
+              <span class="text-danger">
+                {{ $message }}
+              </span>
+            @enderror
           </div>
           <div class="form-group">
             <label for="category_id">Kategori Transaksi
@@ -68,10 +69,10 @@
             </label>
             <select class="custom-select select2 @error('category_id') is-invalid @enderror" id="category_id"
               name="category_id">
-              <option value="" {{ !$item->category_id ? 'selected' : '' }}>-- Pilih Kategori --</option>
+              <option value="" {{ !$from->category_id ? 'selected' : '' }}>-- Pilih Kategori --</option>
               @foreach ($categories as $category)
                 <option value="{{ $category->id }}"
-                  {{ old('category_id', $item->category_id) == $category->id ? 'selected' : '' }}>
+                  {{ old('category_id', $from->category_id) == $category->id ? 'selected' : '' }}>
                   {{ $category->name }}
                 </option>
               @endforeach
@@ -85,7 +86,7 @@
           <div class="form-group">
             <label for="description">Deskripsi</label>
             <input class="form-control @error('description') is-invalid @enderror" id="description" name="description"
-              type="text" value="{{ old('description', $item->description) }}" autofocus placeholder="Deskripsi">
+              type="text" value="{{ old('description', $from->description) }}" autofocus placeholder="Deskripsi">
             @error('description')
               <span class="text-danger">
                 {{ $message }}
@@ -95,7 +96,7 @@
           <div class="form-group">
             <label for="amount">Jumlah</label>
             <input class="form-control col-md-5 @error('amount') is-invalid @enderror text-right" id="amount"
-              name="amount" type="text" value="{{ old('amount', format_number(abs($item->amount))) }}"
+              name="amount" type="text" value="{{ old('amount', format_number(abs($from->amount))) }}"
               placeholder="Jumlah">
             @error('amount')
               <span class="text-danger">
@@ -106,7 +107,7 @@
           <div class="form-group">
             <label for="notes">Keterangan</label>
             <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" cols="30"
-              rows="4">{{ old('notes', $item->notes) }}</textarea>
+              rows="4">{{ old('notes', $from->notes) }}</textarea>
             @error('notes')
               <span class="text-danger">
                 {{ $message }}

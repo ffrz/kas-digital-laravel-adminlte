@@ -70,15 +70,15 @@ class CashAccountController extends Controller
 
             DB::beginTransaction();
             $item->save();
-            if ($isNew || ($oldBalance != $item->balance)) {
-                $amount = $item->balance - $oldBalance;
-                $transaction = new CashTransaction();
-                $transaction->account_id = $item->id;
-                $transaction->date = current_date();
-                $transaction->amount = $amount;
-                $transaction->description = $isNew ? 'Saldo awal' : 'Penyesuaian saldo manual';
-                $transaction->save();
-            }
+            // if ($isNew || ($oldBalance != $item->balance)) {
+            //     $amount = $item->balance - $oldBalance;
+            //     $transaction = new CashTransaction();
+            //     $transaction->account_id = $item->id;
+            //     $transaction->date = current_date();
+            //     $transaction->amount = $amount;
+            //     $transaction->description = $isNew ? 'Saldo awal' : 'Penyesuaian saldo manual';
+            //     $transaction->save();
+            // }
             DB::commit();
 
             return redirect('cash-account')->with('info', 'Akun telah disimpan.');
