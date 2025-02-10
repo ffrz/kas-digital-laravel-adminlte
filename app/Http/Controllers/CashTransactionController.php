@@ -160,7 +160,7 @@ class CashTransactionController extends Controller
             if (empty($data['category_id'])) {
                 $data['category_id'] = null;
             }
-            
+
             $validator = Validator::make($data, [
                 'date' => 'required|date',
                 'from_account_id' => 'required|exists:cash_accounts,id',

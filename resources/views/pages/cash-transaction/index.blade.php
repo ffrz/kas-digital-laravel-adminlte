@@ -51,29 +51,6 @@
               </div>
             </div>
             <div class="form-group row">
-              <label class="col-form-label col-sm-4" for="category_id">Kategori:</label>
-              <div class="col-sm-8">
-                <select class="form-control custom-select select2" id="category_id" name="category_id">
-                  <option value="" {{ !$filter['category_id'] ? 'selected' : '' }}>Semua Kategori</option>
-                  @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" {{ $filter['category_id'] == $category->id ? 'selected' : '' }}>
-                      {{ $category->name }}
-                    </option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-form-label col-sm-4" for="type">Jenis Transaksi:</label>
-              <div class="col-sm-8">
-                <select class="form-control custom-select" name="type" id="type">
-                  <option value="all">Semua</option>
-                  <option value="income" {{ $filter['type'] == 'income' ? 'selected' : '' }}>Pemasukan</option>
-                  <option value="expense" {{ $filter['type'] == 'expense' ? 'selected' : '' }}>Pengeluaran</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group row">
                 <label class="col-form-label col-sm-4" for="period">Periode:</label>
                 <div class="col-sm-8">
                   <select class="form-control custom-select" name="period" id="period">
