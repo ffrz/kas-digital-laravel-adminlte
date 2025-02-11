@@ -131,7 +131,7 @@ class DashboardController extends Controller
         $q = $this->applyAccountIdFilter($q, $filter['account_id'], 'account_id');
         $q = $this->applyPeriodFilter($q, $filter['period']);
         $q->where('amount', '<', 0);
-        return $q->orderBy('amount', 'desc')
+        return $q->orderBy('amount', 'asc')
             ->limit($count)
             ->get();
     }
@@ -169,7 +169,7 @@ class DashboardController extends Controller
             'total_balance' => $this->getTotalBalance($filter),
             'total_income' => $total_income = $this->getTotalIncome($filter),
             'total_expense' => $total_expense = $this->getTotalExpense($filter),
-            'cash_balance' => $total_expense - $total_income,
+            'cash_balance' => $total_income - $total_expense,
             'recent_transactions' => $this->getRecentTransactions($filter),
             'top_incomes' => $this->getTopIncomes($filter),
             'top_expenses' => $this->getTopExpenses($filter),
