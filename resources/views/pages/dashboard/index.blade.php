@@ -115,7 +115,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
           <div class="small-box bg-green">
             <div class="inner">
               <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_income']) }}</h4>
@@ -127,7 +127,7 @@
             <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
           <div class="small-box bg-red">
             <div class="inner">
               <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_expense']) }}</h4>
@@ -135,6 +135,18 @@
             </div>
             <div class="icon">
               <i class="fa fa-arrow-right-from-bracket"></i>
+            </div>
+            <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['cash_balance']) }}</h4>
+              <p>Arus Kas Bersih</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-money-bill-wave"></i>
             </div>
             <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
           </div>
@@ -348,7 +360,16 @@
           maintainAspectRatio: false,
           tooltips: {
             mode: mode,
-            intersect: intersect
+            intersect: intersect,
+            callbacks: {
+              label: function(tooltipItem, data) {
+                let dataset = data.datasets[tooltipItem.datasetIndex];
+                let value = dataset.data[tooltipItem.index];
+
+                return 'Rp. ' + value.toLocaleString("id-ID").replace(/,/g,
+                "."); // Format angka dengan titik sebagai separator ribuan
+              }
+            }
           },
           hover: {
             mode: mode,
@@ -368,7 +389,11 @@
               },
               ticks: $.extend({
                 beginAtZero: true,
-                suggestedMax: 200
+                suggestedMax: 200,
+                callback: function(value, index, values) {
+                  return 'Rp. ' + value.toLocaleString("id-ID").replace(/,/g,
+                    "."); // Menggunakan titik sebagai separator ribuan
+                }
               }, ticksStyle)
             }],
             xAxes: [{
