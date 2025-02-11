@@ -8,6 +8,7 @@ use App\Models\CashTransaction;
 use App\Models\CashTransactionCategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -94,6 +95,10 @@ class CashTransactionController extends Controller
             $item = new CashTransaction();
             $item->date = current_date();
         } else {
+            if (!Auth::user()->is_admin) {
+                return abort(403, "AKSES DITOLAK");
+            }
+            
             $item = CashTransaction::findOrFail($id);
         }
         $item->type = $item->amount < 0 ? 'expense' : 'income';
@@ -212,6 +217,10 @@ class CashTransactionController extends Controller
 
     public function delete($id)
     {
+        if (!Auth::user()->is_admin) {
+            return abort(403, "AKSES DITOLAK");
+        }
+
         $item = CashTransaction::findOrFail($id);
         $account = CashAccount::find($item->account_id);
         $account->balance -= $item->amount;

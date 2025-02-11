@@ -14,8 +14,8 @@
       <i class="fa fa-plus"></i>
     </a>
     <a class="btn btn-default" href="{{ url('cash-transaction/transfer') }}" title="Transfer">
-        <i class="fa fa-right-left"></i>
-      </a>
+      <i class="fa fa-right-left"></i>
+    </a>
     <button class="btn btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
       <i class="fa fa-filter"></i>
       @if ($filter_active)
@@ -51,19 +51,21 @@
               </div>
             </div>
             <div class="form-group row">
-                <label class="col-form-label col-sm-4" for="period">Periode:</label>
-                <div class="col-sm-8">
-                  <select class="form-control custom-select" name="period" id="period">
-                    <option value="all">Semua</option>
-                    <option value="today" {{ $filter['period'] == 'today' ? 'selected' : '' }}>Hari Ini</option>
-                    <option value="yesterday" {{ $filter['period'] == 'yesterday' ? 'selected' : '' }}>Kemarin</option>
-                    <option value="this_week" {{ $filter['period'] == 'this_week' ? 'selected' : '' }}>Minggu Ini</option>
-                    <option value="prev_week" {{ $filter['period'] == 'prev_week' ? 'selected' : '' }}>Minggu Kemarin</option>
-                    <option value="this_month" {{ $filter['period'] == 'this_month' ? 'selected' : '' }}>Bulan Ini</option>
-                    <option value="prev_month" {{ $filter['period'] == 'prev_month' ? 'selected' : '' }}>Bulan Kemarin</option>
-                  </select>
-                </div>
+              <label class="col-form-label col-sm-4" for="period">Periode:</label>
+              <div class="col-sm-8">
+                <select class="form-control custom-select" name="period" id="period">
+                  <option value="all">Semua</option>
+                  <option value="today" {{ $filter['period'] == 'today' ? 'selected' : '' }}>Hari Ini</option>
+                  <option value="yesterday" {{ $filter['period'] == 'yesterday' ? 'selected' : '' }}>Kemarin</option>
+                  <option value="this_week" {{ $filter['period'] == 'this_week' ? 'selected' : '' }}>Minggu Ini</option>
+                  <option value="prev_week" {{ $filter['period'] == 'prev_week' ? 'selected' : '' }}>Minggu Kemarin
+                  </option>
+                  <option value="this_month" {{ $filter['period'] == 'this_month' ? 'selected' : '' }}>Bulan Ini</option>
+                  <option value="prev_month" {{ $filter['period'] == 'prev_month' ? 'selected' : '' }}>Bulan Kemarin
+                  </option>
+                </select>
               </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit"><i class="fas fa-check mr-2"></i> Terapkan</button>
@@ -97,7 +99,9 @@
                     <th>Kategori</th>
                     <th>Uraian</th>
                     <th>Jumlah</th>
-                    <th style="width:5%">Aksi</th>
+                    @if (Auth::user()->is_admin)
+                      <th style="width:5%">Aksi</th>
+                    @endif
                   </tr>
                 </thead>
                 <tbody>
@@ -110,15 +114,17 @@
                       <td>{{ $item->description }}</td>
                       <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
                         {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
-                      <td class="text-center">
-                        <div class="btn-group">
-                          <a class="btn btn-default btn-sm" href="{{ url("cash-transaction/edit/$item->id") }}"><i
-                              class="fa fa-edit"></i></a>
-                          <a class="btn btn-danger btn-sm" href="{{ url("cash-transaction/delete/$item->id") }}"
-                            onclick="return confirm('Anda yakin akan menghapus rekaman ini?')"><i
-                              class="fa fa-trash"></i></a>
-                        </div>
-                      </td>
+                      @if (Auth::user()->is_admin)
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <a class="btn btn-default btn-sm" href="{{ url("cash-transaction/edit/$item->id") }}"><i
+                                class="fa fa-edit"></i></a>
+                            <a class="btn btn-danger btn-sm" href="{{ url("cash-transaction/delete/$item->id") }}"
+                              onclick="return confirm('Anda yakin akan menghapus rekaman ini?')"><i
+                                class="fa fa-trash"></i></a>
+                          </div>
+                        </td>
+                      @endif
                     </tr>
                   @empty
                     <tr class="empty">

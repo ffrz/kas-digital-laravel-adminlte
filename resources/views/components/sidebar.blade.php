@@ -53,6 +53,7 @@
         {{-- End Report Menu --}}
 
         {{-- System Menu --}}
+        @if (Auth::user()->is_admin)
         <li class="nav-item {{ $menu_active == 'system' ? 'menu-open' : '' }}">
           <a class="nav-link {{ $menu_active == 'system' ? 'active' : '' }}" href="#">
             <i class="nav-icon fas fa-gears"></i>
@@ -70,6 +71,7 @@
             </li>
           </ul>
         </li>
+        @endif
         {{-- End of System  menu --}}
 
         <li class="nav-item spacer"></li>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CashAccount;
 use App\Models\CashTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,6 +50,10 @@ class CashAccountController extends Controller
             $item->type = 0;
         }
         else {
+            if (!Auth::user()->is_admin) {
+                return abort(403, "AKSES DITOLAK");
+            }
+
             $item = CashAccount::findOrFail($id);
         }
 
@@ -89,6 +94,10 @@ class CashAccountController extends Controller
 
     public function delete($id)
     {
+        if (!Auth::user()->is_admin) {
+            return abort(403, "AKSES DITOLAK");
+        }
+
         $redirect_url = 'cash-account';
 
         if (!$item = CashAccount::find($id)) {

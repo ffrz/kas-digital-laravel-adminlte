@@ -14,6 +14,13 @@ class UserController extends Controller
     private const VALIDATION_RULE_NAME = 'required|max:100';
     private const VALIDATION_RULE_PASSWORD = 'min:5|max:40';
 
+    public function __construct()
+    {
+        if (!Auth::user()->is_admin) {
+            return abort(403, "AKSES DITOLAK");
+        }
+    }
+
     public function index(Request $request)
     {
         $filter_active = false;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CashTransactionCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CashTransactionCategoryController extends Controller
@@ -33,6 +34,8 @@ class CashTransactionCategoryController extends Controller
         if (!$item) {
             return redirect('cash-transaction-category')
                 ->with('warning', 'Kategori transaksi tidak ditemukan.');
+        } else if (!Auth::user()->is_admin) {
+            return abort(403, "AKSES DITOLAK");
         }
 
         if ($request->method() == 'POST') {
@@ -56,6 +59,10 @@ class CashTransactionCategoryController extends Controller
 
     public function delete($id)
     {
+        if (!Auth::user()->is_admin) {
+            return abort(403, "AKSES DITOLAK");
+        }
+
         if (!$item = CashTransactionCategory::find($id)) {
             $message = 'Kategori tidak ditemukan.';
         } else if ($item->delete($id)) {

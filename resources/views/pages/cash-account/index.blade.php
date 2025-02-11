@@ -68,7 +68,7 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-12 col-sm-8 col-md-9 d-flex align-items-center">
-            <h5 class="m-0">Daftar Kas dan Rekening</h5>
+            <h5 class="my-2">Daftar Kas dan Rekening</h5>
           </div>
           <div class="col-12 col-sm-4 col-md-3 d-flex justify-content-end">
             <input class="form-control" id="search" name="search" type="text" value="{{ $filter['search'] }}"
@@ -87,7 +87,9 @@
                     </th>
                     <th class="d-none d-md-table-cell">Rincian</th>
                     <th class="d-none d-md-table-cell">Saldo (Rp.)</th>
-                    <th style="width:1%">Aksi</th>
+                    @if (Auth::user()->is_admin)
+                      <th style="width:1%">Aksi</th>
+                    @endif
                   </tr>
                 </thead>
                 <tbody>
@@ -111,15 +113,17 @@
                         @endif
                       </td>
                       <td class="d-none d-md-table-cell text-right">{{ format_number($item->balance) }}</td>
-                      <td class="text-center align-middle">
-                        <div class="btn-group">
-                          <a class="btn btn-default btn-sm" href="{{ url("cash-account/edit/$item->id") }}"><i
-                              class="fa fa-edit"></i></a>
-                          <a class="btn btn-danger btn-sm" href="{{ url("cash-account/delete/$item->id") }}"
-                            onclick="return confirm('Anda yakin akan menghapus rekaman ini?')"><i
-                              class="fa fa-trash"></i></a>
-                        </div>
-                      </td>
+                      @if (Auth::user()->is_admin)
+                        <td class="text-center align-middle">
+                          <div class="btn-group">
+                            <a class="btn btn-default btn-sm" href="{{ url("cash-account/edit/$item->id") }}"><i
+                                class="fa fa-edit"></i></a>
+                            <a class="btn btn-danger btn-sm" href="{{ url("cash-account/delete/$item->id") }}"
+                              onclick="return confirm('Anda yakin akan menghapus rekaman ini?')"><i
+                                class="fa fa-trash"></i></a>
+                          </div>
+                        </td>
+                      @endif
                     </tr>
                   @empty
                     <tr class="empty">
