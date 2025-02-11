@@ -98,7 +98,7 @@ class CashTransactionController extends Controller
             if (!Auth::user()->is_admin) {
                 return abort(403, "AKSES DITOLAK");
             }
-            
+
             $item = CashTransaction::findOrFail($id);
         }
         $item->type = $item->amount < 0 ? 'expense' : 'income';

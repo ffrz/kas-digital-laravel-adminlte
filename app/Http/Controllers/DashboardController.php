@@ -177,6 +177,8 @@ class DashboardController extends Controller
         ];
 
         $accounts = CashAccount::where('active', '1')->orderBy('name', 'asc')->get();
-        return view('pages.dashboard.index', compact('data', 'filter_active', 'filter', 'accounts'));
+
+        $cashflow_chart_data = CashTransaction::getCashflowData($filter);
+        return view('pages.dashboard.index', compact('data', 'filter_active', 'filter', 'accounts', 'cashflow_chart_data'));
     }
 }

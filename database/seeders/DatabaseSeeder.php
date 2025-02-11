@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CashTransactionCategorySeeder::class,
             CashAccountSeeder::class,
+            CashTransactionSeeder::class
         ]);
     }
 }
