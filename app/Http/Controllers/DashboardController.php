@@ -42,9 +42,10 @@ class DashboardController extends Controller
             'custom' => 'Custom Period',
         ];
 
+        $is_reset = $request->get('action');
         $filter = [
-            'account_id' => $request->get('account_id', $request->session()->get('dashboard.filter.account_id', 'all')),
-            'period' => $request->get('period', $request->session()->get('dashboard.filter.period', 'today')),
+            'account_id' => $is_reset ? 'all' : $request->get('account_id', 'all'),
+            'period' => $is_reset ? 'this_month' : $request->get('period', 'this_month'),
         ];
 
         $data = [

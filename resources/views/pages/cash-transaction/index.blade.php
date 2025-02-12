@@ -80,7 +80,7 @@
                   <option value="" {{ !$filter['category_id'] ? 'selected' : '' }}>Semua Kategori</option>
                   @foreach ($categories as $category)
                     <option value="{{ $category->id }}" {{ $filter['category_id'] == $category->id ? 'selected' : '' }}>
-                      {{ $category->name }}
+                      {{ $category->type == 'income' ? 'Pemasukan' : 'Pengeluaran' }} : {{ $category->name }}
                     </option>
                   @endforeach
                 </select>

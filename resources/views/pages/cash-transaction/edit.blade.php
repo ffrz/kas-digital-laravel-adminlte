@@ -72,7 +72,7 @@
               @foreach ($categories as $category)
                 <option value="{{ $category->id }}"
                   {{ old('category_id', $item->category_id) == $category->id ? 'selected' : '' }}>
-                  {{ $category->name }}
+                  {{ $category->type == 'income' ? 'Pemasukan' : 'Pengeluaran' }} : {{ $category->name }}
                 </option>
               @endforeach
             </select>
