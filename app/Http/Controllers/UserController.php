@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
 {
@@ -52,7 +55,7 @@ class UserController extends Controller
     public function export(Request $request)
     {
         // ambil data users
-        $users = User::all();
+        $users = User::orderBy('id', 'asc')->get();
 
         if ($request->get('format') == 'pdf') {
             // Load data ke dalam tampilan PDF
@@ -60,6 +63,41 @@ class UserController extends Controller
 
             // Unduh sebagai file PDF
             return $pdf->download('Daftar Pengguna Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        if ($request->get('format') == 'excel') {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Tambahkan header
+            $sheet->setCellValue('A1', 'ID');
+            $sheet->setCellValue('B1', 'Username');
+            $sheet->setCellValue('C1', 'Nama Lengkap');
+            $sheet->setCellValue('D1', 'Hak Akses');
+            $sheet->setCellValue('E1', 'Status');
+
+            // Tambahkan data ke Excel
+            $row = 2;
+            foreach ($users as $user) {
+                $sheet->setCellValue('A' . $row, $user->id);
+                $sheet->setCellValue('B' . $row, $user->username);
+                $sheet->setCellValue('C' . $row, $user->fullname);
+                $sheet->setCellValue('D' . $row, $user->is_admin ? 'Administrator' : 'User');
+                $sheet->setCellValue('E' . $row, $user->is_active ? 'Aktif' : 'Tidak Aktif');
+                $row++;
+            }
+
+            // Kirim ke memori tanpa menyimpan file
+            $response = new StreamedResponse(function () use ($spreadsheet) {
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+            });
+
+            // Atur header response untuk download
+            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $response->headers->set('Content-Disposition', 'attachment; filename="Kas Digital - Daftar Pengguna.xlsx"');
+
+            return $response;
         }
 
         return abort(400, 'Format tidak didukung');

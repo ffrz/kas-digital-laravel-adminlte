@@ -9,6 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CashTransactionCategoryController extends Controller
 {
@@ -40,7 +43,7 @@ class CashTransactionCategoryController extends Controller
     public function export(Request $request)
     {
         // ambil data akun
-        $categories = CashTransactionCategory::orderBy('name', 'asc')->get();
+        $categories = CashTransactionCategory::orderBy('id', 'asc')->get();
 
         if ($request->get('format') == 'pdf') {
             // Load data ke dalam tampilan PDF
@@ -48,6 +51,39 @@ class CashTransactionCategoryController extends Controller
 
             // Unduh sebagai file PDF
             return $pdf->download('Daftar Kategori Transaksi Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        if ($request->get('format') == 'excel') {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Tambahkan header
+            $sheet->setCellValue('A1', 'ID');
+            $sheet->setCellValue('B1', 'Jenis Transaksi');
+            $sheet->setCellValue('C1', 'Nama Kategori');
+            $sheet->setCellValue('D1', 'Deskripsi');
+
+            // Tambahkan data ke Excel
+            $row = 2;
+            foreach ($categories as $category) {
+                $sheet->setCellValue('A' . $row, $category->id);
+                $sheet->setCellValue('B' . $row, $category->type == 'income' ? 'Pemasukan' : 'Pengeluaran');
+                $sheet->setCellValue('C' . $row, $category->name);
+                $sheet->setCellValue('D' . $row, $category->description);
+                $row++;
+            }
+
+            // Kirim ke memori tanpa menyimpan file
+            $response = new StreamedResponse(function () use ($spreadsheet) {
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+            });
+
+            // Atur header response untuk download
+            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $response->headers->set('Content-Disposition', 'attachment; filename="Kas Digital - Daftar Kategori Transaksi.xlsx"');
+
+            return $response;
         }
 
         return abort(400, 'Format tidak didukung');

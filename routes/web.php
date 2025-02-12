@@ -6,6 +6,7 @@ use App\Http\Controllers\CashAccountController;
 use App\Http\Controllers\CashTransactionCategoryController;
 use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\Authenticate;
@@ -61,6 +62,10 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::match(['get', 'post'], 'edit/{id}', 'edit');
         Route::match(['get', 'post'], 'transfer', 'transfer');
         Route::get('delete/{id}', 'delete');
+    });
+
+    Route::controller(ReportController::class)->prefix('report')->group(function () {
+        Route::get('', 'index');
     });
 
     Route::controller(CashAccountController::class)->prefix('cash-account')->group(function () {

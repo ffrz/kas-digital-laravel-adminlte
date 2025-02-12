@@ -12,10 +12,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CashTransactionController extends Controller
 {
-
     private function getTransactions($filter, &$filter_active, $apply_search = true)
     {
 
@@ -85,7 +87,7 @@ class CashTransactionController extends Controller
         return [
             'account_id' => $is_reset ? -1 : (int)$request->get('account_id', -1),
             'category_id' => $is_reset ? -1 : (int)$request->get('category_id', -1),
-            'period' => $is_reset ? 'all' : $request->get('period', 'all'),
+            'period' => $is_reset ? 'this_month' : $request->get('period', 'this_month'),
             'type' => $is_reset ? 'all' : $request->get('type', 'all'),
             'search' => $request->get('search', ''),
         ];
@@ -114,6 +116,51 @@ class CashTransactionController extends Controller
 
             // Unduh sebagai file PDF
             return $pdf->download('Daftar Transaksi Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        if ($request->get('format') == 'excel') {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Tambahkan header
+            $sheet->setCellValue('A1', 'ID');
+            $sheet->setCellValue('B1', 'Tanggal');
+            $sheet->setCellValue('C1', 'Jenis Transaksi');
+            $sheet->setCellValue('D1', 'ID Akun');
+            $sheet->setCellValue('E1', 'Nama Akun');
+            $sheet->setCellValue('F1', 'ID Kategori');
+            $sheet->setCellValue('G1', 'Nama Kategori');
+            $sheet->setCellValue('H1', 'Deskripsi');
+            $sheet->setCellValue('I1', 'Jumlah');
+            $sheet->setCellValue('J1', 'Catatan');
+
+            // Tambahkan data ke Excel
+            $row = 2;
+            foreach ($items as $item) {
+                $sheet->setCellValue('A' . $row, $item->id);
+                $sheet->setCellValue('B' . $row, $item->date);
+                $sheet->setCellValue('C' . $row, $item->amount > 0 ? 'Pemasukan' : 'Pengeluaran');
+                $sheet->setCellValue('D' . $row, $item->account->id);
+                $sheet->setCellValue('E' . $row, $item->account->name);
+                $sheet->setCellValue('F' . $row, $item->category->id);
+                $sheet->setCellValue('G' . $row, $item->category->name);
+                $sheet->setCellValue('H' . $row, $item->description);
+                $sheet->setCellValue('I' . $row, $item->amount);
+                $sheet->setCellValue('J' . $row, $item->notes);
+                $row++;
+            }
+
+            // Kirim ke memori tanpa menyimpan file
+            $response = new StreamedResponse(function () use ($spreadsheet) {
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+            });
+
+            // Atur header response untuk download
+            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $response->headers->set('Content-Disposition', 'attachment; filename="Kas Digital - Daftar Transaksi.xlsx"');
+
+            return $response;
         }
 
         return abort(400, 'Format tidak didukung');
