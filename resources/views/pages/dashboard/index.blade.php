@@ -69,7 +69,7 @@
     <div class="container-fluid">
       <div class="row">
         <div clas="col-12">
-          <h5 class="m-2 mb-3">Ringkasan {{ $data['selected_account_name'] }} - {{ $data['selected_period'] }}</h5>
+          <h5 class="m-2 mb-3">Ringkasan Aktual</h5>
         </div>
       </div>
       <div class="row">
@@ -115,6 +115,30 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Distribusi Akun Kas</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="account-balance-distribution-chart"
+                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div clas="col-12">
+          <h5 class="m-2 mb-3">Ringkasan {{ $data['selected_period'] }} untuk {{ $data['selected_account_name'] }}</h5>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-12 col-md-4">
           <div class="small-box bg-green">
             <div class="inner">
@@ -152,11 +176,144 @@
           </div>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Pemasukan vs Pengeluaran</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="income-vs-expense-chart"
+                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Pemasukan per Kategori</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="income-by-category-chart"
+                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Pengeluaran per Kategori</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="expense-by-category-chart"
+                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header border-0">
+              <div class="d-flex justify-content-between">
+                <h3 class="card-title">Arus Kas</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="position-relative mb-4">
+                <canvas id="cashflow-chart" height="200"></canvas>
+              </div>
+              <div class="d-flex justify-content-end flex-row">
+                <span class="mr-2">
+                  <i class="fas fa-square text-success"></i> Pemasukan
+                </span>
+                <span>
+                  <i class="fas fa-square text-danger"></i> Pengeluaran
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header border-0">
+              <h3 class="card-title">5 Transaksi Terakhir</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body py-0">
+              <div class="table-responsive p-0">
+                <table class="table-bordered table-striped table-sm table">
+                  <thead>
+                    <tr>
+                      <th style="width:1%">ID</th>
+                      <th style="width:1%">Tanggal</th>
+                      <th>Akun</th>
+                      <th>Kategori</th>
+                      <th>Uraian</th>
+                      <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($data['recent_transactions'] as $item)
+                      <tr>
+                        <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
+                        <td class="text-nowrap">{{ format_date($item->date) }}</td>
+                        <td>{{ $item->account->name }}</td>
+                        <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
+                        <td>{{ $item->description }}</td>
+                        <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
+                          {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
+                      </tr>
+                    @empty
+                      <tr class="empty">
+                        <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-lg-6 col-12">
           <div class="card">
             <div class="card-header border-0">
               <h3 class="card-title">Top 5 Pemasukan</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
             </div>
             <div class="card-body py-0">
               <div class="table-responsive p-0">
@@ -197,6 +354,11 @@
           <div class="card">
             <div class="card-header border-0">
               <h3 class="card-title">Top 5 Pengeluaran</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
             </div>
             <div class="card-body py-0">
               <div class="table-responsive p-0">
@@ -234,83 +396,12 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="d-flex justify-content-between">
-                <h3 class="card-title">Grafik Arus Kas</h3>
-                <a href="javascript:void(0);">View Report</a>
-              </div>
-            </div>
-            <div class="card-body">
-
-              <!-- /.d-flex -->
-
-              <div class="position-relative mb-4">
-                <canvas id="cashflow-chart" height="200"></canvas>
-              </div>
-
-              <div class="d-flex justify-content-end flex-row">
-                <span class="mr-2">
-                  <i class="fas fa-square text-success"></i> Pemasukan
-                </span>
-
-                <span>
-                  <i class="fas fa-square text-danger"></i> Pengeluaran
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header border-0">
-              <h3 class="card-title">5 Transaksi Terakhir</h3>
-            </div>
-            <div class="card-body py-0">
-              <div class="table-responsive p-0">
-                <table class="table-bordered table-striped table-sm table">
-                  <thead>
-                    <tr>
-                      <th style="width:1%">ID</th>
-                      <th style="width:1%">Tanggal</th>
-                      <th>Akun</th>
-                      <th>Kategori</th>
-                      <th>Uraian</th>
-                      <th>Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($data['recent_transactions'] as $item)
-                      <tr>
-                        <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
-                        <td class="text-nowrap">{{ format_date($item->date) }}</td>
-                        <td>{{ $item->account->name }}</td>
-                        <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
-                          {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
-                      </tr>
-                    @empty
-                      <tr class="empty">
-                        <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
-                      </tr>
-                    @endforelse
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 @endsection
 @section('footscript')
   <script src="{{ url('plugins/chart.js/Chart.min.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
   <script>
     /* global Chart:false */
 
@@ -324,8 +415,6 @@
 
       var mode = 'index'
       var intersect = true
-
-
 
       var $cashflowChart = $('#cashflow-chart')
       // eslint-disable-next-line no-unused-vars
@@ -365,9 +454,7 @@
               label: function(tooltipItem, data) {
                 let dataset = data.datasets[tooltipItem.datasetIndex];
                 let value = dataset.data[tooltipItem.index];
-
-                return 'Rp. ' + value.toLocaleString("id-ID").replace(/,/g,
-                "."); // Format angka dengan titik sebagai separator ribuan
+                return formatRupiah(value);
               }
             }
           },
@@ -391,8 +478,7 @@
                 beginAtZero: true,
                 suggestedMax: 200,
                 callback: function(value, index, values) {
-                  return 'Rp. ' + value.toLocaleString("id-ID").replace(/,/g,
-                    "."); // Menggunakan titik sebagai separator ribuan
+                  return formatRupiah(value);
                 }
               }, ticksStyle)
             }],
@@ -406,6 +492,77 @@
           }
         }
       })
+
+      var createDonutChart = (elementId, data) => {
+        var el = $(elementId).get(0).getContext('2d');
+        return new Chart(el, {
+          type: 'doughnut',
+          data: data,
+          options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var dataset = data.datasets[tooltipItem.datasetIndex];
+                  var value = dataset.data[tooltipItem.index];
+                  return formatRupiah(value);
+                }
+              }
+            }
+          },
+          plugins: {
+            datalabels: {
+              color: '#fff',
+              anchor: 'center',
+              align: 'center',
+              font: {
+                weight: 'bold',
+                size: 14
+              },
+              formatter: function(value, context) {
+                return formatRupiah(value);
+              }
+            }
+          }
+        })
+      }
+
+      let data = {!! json_encode($income_vs_expense_chart_data) !!};
+      createDonutChart('#income-vs-expense-chart', {
+        labels: data.labels,
+        datasets: [{
+          data: data.data,
+          backgroundColor: ['#00aa00', '#dd0000'],
+        }]
+      });
+
+      data = {!! json_encode($account_balance_distribution_chart_data) !!};
+      createDonutChart('#account-balance-distribution-chart', {
+        labels: data.labels,
+        datasets: [{
+          data: data.data,
+          backgroundColor: generateUniqueColors(data.labels.length),
+        }]
+      });
+
+      data = {!! json_encode($income_by_category_chart_data) !!};
+      createDonutChart('#income-by-category-chart', {
+        labels: data.labels,
+        datasets: [{
+          data: data.data,
+          backgroundColor: generateUniqueColors(data.labels.length),
+        }]
+      });
+
+      data = {!! json_encode($expense_by_category_chart_data) !!};
+      createDonutChart('#expense-by-category-chart', {
+        labels: data.labels,
+        datasets: [{
+          data: data.data,
+          backgroundColor: generateUniqueColors(data.labels.length),
+        }]
+      });
     })
 
     // lgtm [js/unused-local-variable]

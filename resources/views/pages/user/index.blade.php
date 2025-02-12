@@ -63,7 +63,7 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-12 col-sm-8 col-md-9 d-flex align-items-center">
-            <h5 class="m-0">Daftar Pengguna</h5>
+            <h5 class="my-2">Daftar Pengguna</h5>
           </div>
           <div class="col-12 col-sm-4 col-md-3 d-flex justify-content-end">
             <input class="form-control" id="search" name="search" type="text" value="{{ $filter['search'] }}"

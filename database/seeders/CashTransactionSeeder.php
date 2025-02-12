@@ -21,14 +21,14 @@ class CashTransactionSeeder extends Seeder
         DB::beginTransaction();
         for ($date = $startDate; $date <= $endDate; $date->addDay()) {
             for ($i = 0; $i < rand(1, 5); $i++) { // Setiap hari bisa ada 1-5 transaksi
-                $isIncome = rand(0, 3) !== 0; // 75% income, 25% expense
+                $isIncome = rand(0, 4) < 2; // 2/5 pemasukan, 3/5 pengeluaran
                 $amount = $isIncome
-                    ? rand(1000, 10000000) // Pemasukan lebih besar
-                    : -rand(1000, 5000000); // Pengeluaran maksimal hanya 5 juta
+                    ? rand(1000, 5000000) // Maksimum pemasukan 5 juta
+                    : -rand(1000, 3000000); // Maksimum pengeluaran 3 juta
 
                 CashTransaction::insert([
                     'account_id' => rand(1, 2),
-                    'category_id' => rand(1, 3), // Sesuaikan dengan kategori yang tersedia
+                    'category_id' => rand(1, 8), // Sesuaikan dengan kategori yang tersedia
                     'amount' => $amount,
                     'date' => $date->toDateString(),
                     'description' => fake()->sentence(6),

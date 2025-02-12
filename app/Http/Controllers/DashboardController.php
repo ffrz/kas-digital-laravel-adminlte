@@ -29,124 +29,9 @@ class DashboardController extends Controller
         return $query->where($col, $accountId);
     }
 
-
-    /**
-     * Fungsi untuk menerapkan filter periode ke query transaksi
-     *
-     * @param Builder $query Query Eloquent yang akan difilter
-     * @param string|null $period Periode yang ingin difilter (today, yesterday, this_week, prev_week, this_month, prev_month)
-     * @return Builder Query Eloquent yang sudah difilter
-     */
-    private function applyPeriodFilter(Builder $query, ?string $period): Builder
-    {
-        if (!$period || $period === 'all') {
-            return $query; // Jika periodenya 'all' atau null, langsung return query tanpa filter tambahan
-        }
-
-        switch ($period) {
-            case 'today':
-                $query->whereDate('date', Carbon::today());
-                break;
-
-            case 'yesterday':
-                $query->whereDate('date', Carbon::yesterday());
-                break;
-
-            case 'this_week':
-                $query->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-                break;
-
-            case 'prev_week':
-                $query->whereBetween('date', [
-                    Carbon::now()->subWeek()->startOfWeek(),
-                    Carbon::now()->subWeek()->endOfWeek()
-                ]);
-                break;
-
-            case 'this_month':
-                $query->whereBetween('date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
-                break;
-
-            case 'prev_month':
-                $query->whereBetween('date', [
-                    Carbon::now()->subMonth()->startOfMonth(),
-                    Carbon::now()->subMonth()->endOfMonth()
-                ]);
-                break;
-        }
-
-        return $query;
-    }
-
-    public function getActiveUserCount()
-    {
-        return User::where('is_active', 1)->count();
-    }
-
-    public function getTotalBalance($filter)
-    {
-        $q = CashAccount::query();
-        $q->where('active', 1);
-        $q = $this->applyAccountIdFilter($q, $filter['account_id']);
-        return $q->sum('balance');
-    }
-
-    public function getActiveAccountCount()
-    {
-        return CashAccount::where('active', 1)->count();
-    }
-
-    public function getTotalIncome($filter)
-    {
-        $q = CashTransaction::where('amount', '>', 0);
-        $q = $this->applyAccountIdFilter($q, $filter['account_id'], 'account_id');
-        $q = $this->applyPeriodFilter($q, $filter['period']);
-        return $q->sum('amount');
-    }
-
-    public function getRecentTransactions($filter, $count = 5)
-    {
-        $q = CashTransaction::with(['account']);
-        $q = $this->applyAccountIdFilter($q, $filter['account_id'], 'account_id');
-        return $q->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
-            ->limit($count)
-            ->get();
-    }
-
-    public function getTopIncomes($filter, $count = 5)
-    {
-        $q = CashTransaction::query();
-        $q = $this->applyAccountIdFilter($q, $filter['account_id'], 'account_id');
-        $q = $this->applyPeriodFilter($q, $filter['period']);
-        $q->where('amount', '>', 0);
-        return $q->orderBy('amount', 'desc')
-            ->limit($count)
-            ->get();
-    }
-
-    public function getTopExpenses($filter, $count = 5)
-    {
-        $q = CashTransaction::query();
-        $q = $this->applyAccountIdFilter($q, $filter['account_id'], 'account_id');
-        $q = $this->applyPeriodFilter($q, $filter['period']);
-        $q->where('amount', '<', 0);
-        return $q->orderBy('amount', 'asc')
-            ->limit($count)
-            ->get();
-    }
-
-    public function getTotalExpense($filter)
-    {
-        $q = CashTransaction::where('amount', '<', 0);
-        $q = $this->applyAccountIdFilter($q, $filter['account_id'], 'account_id');
-        $q = $this->applyPeriodFilter($q, $filter['period']);
-        return abs($q->sum('amount'));
-    }
-
     public function index(Request $request)
     {
-        $filter_active = false;
+        $filter_active = true; // set selalu true karena periode selalu aktif
         $periods = [
             'today' => 'Hari Ini',
             'yesterday' => 'Kemarin',
@@ -156,7 +41,6 @@ class DashboardController extends Controller
             'prev_month' => 'Bulan Kemarin',
             'custom' => 'Custom Period',
         ];
-        $accounts = CashAccount::all()->keyBy('id');
 
         $filter = [
             'account_id' => $request->get('account_id', $request->session()->get('dashboard.filter.account_id', 'all')),
@@ -164,22 +48,45 @@ class DashboardController extends Controller
         ];
 
         $data = [
-            'active_user_count' => $this->getActiveUserCount(),
-            'active_cash_account_count' => $this->getActiveAccountCount(),
-            'total_balance' => $this->getTotalBalance($filter),
-            'total_income' => $total_income = $this->getTotalIncome($filter),
-            'total_expense' => $total_expense = $this->getTotalExpense($filter),
+            'active_user_count' => User::getActiveCount(),
+            'active_cash_account_count' => CashAccount::getActiveCount(),
+            'total_balance' => CashAccount::getTotalBalance($filter),
+            'total_income' => $total_income = CashTransaction::getTotalIncome($filter),
+            'total_expense' => $total_expense = CashTransaction::getTotalExpense($filter),
             'cash_balance' => $total_income - $total_expense,
-            'recent_transactions' => $this->getRecentTransactions($filter),
-            'top_incomes' => $this->getTopIncomes($filter),
-            'top_expenses' => $this->getTopExpenses($filter),
-            'selected_account_name' => $filter['account_id'] == 'all' ? 'Semua Kas' : $accounts[$filter['account_id']]->name,
+            'recent_transactions' => CashTransaction::getRecentTransactions($filter),
+            'top_incomes' => CashTransaction::getTopIncomes($filter),
+            'top_expenses' => CashTransaction::getTopExpenses($filter),
+            'selected_account_name' => $this->getSelectedAccountName($filter['account_id']),
             'selected_period' => $periods[$filter['period']],
         ];
 
-        $accounts = CashAccount::where('active', '1')->orderBy('name', 'asc')->get();
-
+        $accounts = CashAccount::getActiveAccounts();
         $cashflow_chart_data = CashTransaction::getCashflowData($filter);
-        return view('pages.dashboard.index', compact('data', 'filter_active', 'filter', 'accounts', 'cashflow_chart_data'));
+        $account_balance_distribution_chart_data = CashAccount::getAccountBalanceDistributionChartData();
+        $income_vs_expense_chart_data = CashTransaction::getIncomeVsExpenseChartData($filter);
+        $income_by_category_chart_data = CashTransaction::getIncomeByCategoryChartData($filter);
+        $expense_by_category_chart_data = CashTransaction::getExpenseByCategoryChartData($filter);
+
+        return view('pages.dashboard.index', compact(
+            'data',
+            'filter_active',
+            'filter',
+            'accounts',
+            'cashflow_chart_data',
+            'account_balance_distribution_chart_data',
+            'income_vs_expense_chart_data',
+            'income_by_category_chart_data',
+            'expense_by_category_chart_data',
+        ));
+    }
+
+    /**
+     * Mendapatkan nama akun kas berdasarkan ID
+     */
+    private function getSelectedAccountName($accountId)
+    {
+        if ($accountId == 'all') return 'Semua Kas';
+        return CashAccount::find($accountId)->name ?? 'Tidak Diketahui';
     }
 }

@@ -40,4 +40,9 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public static function getActiveCount()
+    {
+        return User::where('is_active', 1)->count();
+    }
 }

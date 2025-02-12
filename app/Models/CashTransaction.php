@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CashTransaction extends BaseModel
 {
@@ -17,7 +18,12 @@ class CashTransaction extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'category_id', 'account_id', 'date', 'amount', 'description', 'notes'
+        'category_id',
+        'account_id',
+        'date',
+        'amount',
+        'description',
+        'notes'
     ];
 
     protected static $_types = [
@@ -53,15 +59,150 @@ class CashTransaction extends BaseModel
         return $this->belongsTo(CashTransactionCategory::class, 'category_id');
     }
 
+    public static function getRecentTransactions($filter, $count = 5)
+    {
+        $q = CashTransaction::with(['account']);
+        $q = static::applyAccountIdFilter($q, $filter['account_id']);
+        return $q->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->limit($count)
+            ->get();
+    }
+
     public static function getCashflowData(array $filter)
     {
+        $q = static::query();
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        $q = static::applyAccountIdFilter($q, $filter['account_id']);
+
+        // Ambil transaksi dan kelompokkan berdasarkan tanggal
+        $transactions = $q->get()->groupBy(function ($trx) {
+            return Carbon::parse($trx->date)->format('d'); // Format tanggal contoh: "08"
+        });
+
+        // Siapkan array data untuk grafik
+        $labels = [];
+        $incomes = [];
+        $expenses = [];
+
+        foreach ($transactions as $date => $trxGroup) {
+            $labels[] = $date;
+            $income = $trxGroup->where('amount', '>', 0)->sum('amount');
+            $expense = abs($trxGroup->where('amount', '<', 0)->sum('amount')); // Convert ke positif
+            $incomes[] = $income;
+            $expenses[] = $expense;
+        }
+
+        return [
+            'labels'   => $labels,
+            'incomes'  => $incomes,
+            'expenses' => $expenses,
+        ];
+    }
+
+    public static function getTotalIncome($filter)
+    {
+        $q = static::where('amount', '>', 0);
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        return $q->sum('amount');
+    }
+
+    public static function getTopIncomes($filter, $count = 5)
+    {
+        $q = static::query();
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        $q->where('amount', '>', 0);
+        return $q->orderBy('amount', 'desc')
+            ->limit($count)
+            ->get();
+    }
+
+    public static function getTopExpenses($filter, $count = 5)
+    {
+        $q = static::query();
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        $q->where('amount', '<', 0);
+        return $q->orderBy('amount', 'asc')
+            ->limit($count)
+            ->get();
+    }
+
+    public static function getTotalExpense($filter)
+    {
+        $q = static::where('amount', '<', 0);
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        return abs($q->sum('amount'));
+    }
+
+    public static function getIncomeVsExpenseChartData($filter)
+    {
+        $q = static::query();
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+
+        $transactions = $q->get();
+
+        return [
+            'labels' => ['Pemasukan', 'Pengeluaran'],
+            'data' => [
+                $transactions->where('amount', '>', 0)->sum('amount'),
+                abs($transactions->where('amount', '<', 0)->sum('amount'))
+            ],
+        ];
+    }
+
+    public static function getIncomeByCategoryChartData($filter)
+    {
+        $q = static::where('amount', '>', 0);
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        $categories = $q->with('category')
+            ->select('category_id', DB::raw('SUM(amount) as total'))
+            ->groupBy('category_id')
+            ->get();
+        return [
+            'labels' => $categories->map(fn($c) => $c->category->name)->toArray(),
+            'data' => $categories->pluck('total')->toArray(),
+        ];
+    }
+
+    public static function getExpenseByCategoryChartData($filter)
+    {
+        $q = static::where('amount', '<', 0);
+        $q = static::applyAccountIdFilter($q, $filter['account_id'], 'account_id');
+        $q = static::applyPeriodFilter($q, $filter['period']);
+        $categories = $q->with('category')
+            ->select('category_id', DB::raw('SUM(amount) as total'))
+            ->groupBy('category_id')
+            ->get();
+        return [
+            'labels' => $categories->map(fn($c) => $c->category->name)->toArray(),
+            'data' => $categories->pluck('total')->toArray(),
+        ];
+    }
+
+    private static function applyAccountIdFilter($q, $accountId)
+    {
+        if (empty($accountId) || $accountId === 'all') {
+            return $q;
+        }
+
+        return $q->where('account_id', $accountId);
+    }
+
+    private static function applyPeriodFilter($q, $period)
+    {
         // Pastikan period diisi
-        if (!isset($filter['period'])) {
+        if (empty($period)) {
             throw new \InvalidArgumentException("Filter 'period' wajib diisi.");
         }
 
         // Tentukan rentang tanggal berdasarkan periode yang dipilih
-        switch ($filter['period']) {
+        switch ($period) {
             case 'today':
                 $startDate = $endDate = Carbon::today();
                 break;
@@ -89,34 +230,6 @@ class CashTransaction extends BaseModel
         }
 
         // Query transaksi berdasarkan rentang tanggal dan optional filter account_id
-        $query = self::whereBetween('date', [$startDate, $endDate]);
-
-        if (!empty($filter['account_id']) && $filter['account_id'] !== 'all') {
-            $query->where('account_id', $filter['account_id']);
-        }
-
-        // Ambil transaksi dan kelompokkan berdasarkan tanggal
-        $transactions = $query->get()->groupBy(function ($trx) {
-            return Carbon::parse($trx->date)->format('d'); // Format tanggal contoh: "18 Feb"
-        });
-
-        // Siapkan array data untuk grafik
-        $labels = [];
-        $incomes = [];
-        $expenses = [];
-
-        foreach ($transactions as $date => $trxGroup) {
-            $labels[] = $date;
-            $income = $trxGroup->where('amount', '>', 0)->sum('amount');
-            $expense = abs($trxGroup->where('amount', '<', 0)->sum('amount')); // Convert ke positif
-            $incomes[] = $income;
-            $expenses[] = $expense;
-        }
-
-        return [
-            'labels'   => $labels,
-            'incomes'  => $incomes,
-            'expenses' => $expenses,
-        ];
+        return $q->whereBetween('date', [$startDate, $endDate]);
     }
 }

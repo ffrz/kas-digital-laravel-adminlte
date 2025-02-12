@@ -13,8 +13,15 @@ class CashTransactionCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        CashTransactionCategory::insert(['id' => 1, 'name' => 'Pemasukan Iuran']);
-        CashTransactionCategory::insert(['id' => 2, 'name' => 'Pengeluaran Lain-lain']);
-        CashTransactionCategory::insert(['id' => 3, 'name' => 'Pendapatan Lain-lain']);
+        CashTransactionCategory::insert([
+            ['name' => 'Investasi'],
+            ['name' => 'Operasional Usaha'],
+            ['name' => 'Laba Usaha'],
+            ['name' => 'Pajak Kendaran'],
+            ['name' => 'Biaya Hidup'],
+            ['name' => 'PBB'],
+            ['name' => 'Renovasi Bangunan'],
+            ['name' => 'Pemeliharaan Kendaraan'],
+        ]);
     }
 }
