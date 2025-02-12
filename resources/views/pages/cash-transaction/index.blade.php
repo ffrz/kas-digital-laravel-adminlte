@@ -28,10 +28,10 @@
       </button>
       <div class="dropdown-menu" role="menu">
         <a class="dropdown-item"
-          href="{{ url('cash-transaction-category/export?format=pdf') . '&' . http_build_query($filter) }}"><i
+          href="{{ url('cash-transaction/export?format=pdf') . '&' . http_build_query($filter) }}"><i
             class="fa fa-file-pdf text-danger mr-2"></i> Ekspor PDF</a>
         <a class="dropdown-item"
-          href="{{ url('cash-transaction-category/export?format=excel') . '&' . http_build_query($filter) }}"><i
+          href="{{ url('cash-transaction/export?format=excel') . '&' . http_build_query($filter) }}"><i
             class="fa fa-file-excel text-success mr-2"></i> Ekspor Excel</a>
       </div>
     </div>

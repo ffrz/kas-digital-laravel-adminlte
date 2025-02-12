@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 class CashTransactionController extends Controller
 {
 
-    private function getTransactions($filter, &$filter_active)
+    private function getTransactions($filter, &$filter_active, $apply_search = true)
     {
 
         $q = CashTransaction::with(['account', 'category']);
@@ -70,25 +70,31 @@ class CashTransactionController extends Controller
         }
 
 
-        if (!empty($filter['search'])) {
-            $q->where('description', 'like', '%' . $filter['search'] . '%');
+        if ($apply_search) {
+            if (!empty($filter['search'])) {
+                $q->where('description', 'like', '%' . $filter['search'] . '%');
+            }
         }
 
         return $q->orderBy('id', 'desc')->paginate(10);
     }
 
-    public function index(Request $request)
+    private function getFilter(Request $request)
     {
-        $filter_active = false;
         $is_reset = $request->get('action') == 'reset';
-        $filter = [
+        return [
             'account_id' => $is_reset ? -1 : (int)$request->get('account_id', -1),
             'category_id' => $is_reset ? -1 : (int)$request->get('category_id', -1),
             'period' => $is_reset ? 'all' : $request->get('period', 'all'),
             'type' => $is_reset ? 'all' : $request->get('type', 'all'),
             'search' => $request->get('search', ''),
         ];
+    }
 
+    public function index(Request $request)
+    {
+        $filter_active = false;
+        $filter = $this->getFilter($request);
         $items = $this->getTransactions($filter, $filter_active);
         $accounts = CashAccount::all();
         $categories = CashTransactionCategory::all();
@@ -98,15 +104,13 @@ class CashTransactionController extends Controller
 
     public function export(Request $request)
     {
-        // ambil data akun
-        $q = CashTransaction::with('account_id');
-        $q->orderBy('date', 'desc');
-
-        $items = $q->get();
+        $filter = $this->getFilter($request);
+        $items = $this->getTransactions($filter, $filter_activ, false);
 
         if ($request->get('format') == 'pdf') {
             // Load data ke dalam tampilan PDF
-            $pdf = Pdf::loadView('pages.cash-transaction-category.export.cash-transaction-category-list-pdf', compact('items'));
+            //return view('pages.cash-transaction.export.cash-transaction-list-pdf', compact('items'));
+            $pdf = Pdf::loadView('pages.cash-transaction.export.cash-transaction-list-pdf', compact('items'));
 
             // Unduh sebagai file PDF
             return $pdf->download('Daftar Transaksi Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
