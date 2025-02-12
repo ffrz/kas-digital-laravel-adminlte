@@ -14,14 +14,16 @@ class CashTransactionCategorySeeder extends Seeder
     public function run(): void
     {
         CashTransactionCategory::insert([
-            ['name' => 'Investasi'],
-            ['name' => 'Operasional Usaha'],
-            ['name' => 'Laba Usaha'],
-            ['name' => 'Pajak Kendaran'],
-            ['name' => 'Biaya Hidup'],
-            ['name' => 'PBB'],
-            ['name' => 'Renovasi Bangunan'],
-            ['name' => 'Pemeliharaan Kendaraan'],
+            ['name' => 'Keuntungan Investasi', 'type' => 'income'],
+            ['name' => 'Refund Income', 'type' => 'income'],
+            ['name' => 'Refund Expense', 'type' => 'expense'],
+            ['name' => 'Operasional Usaha', 'type' => 'expense'],
+            ['name' => 'Laba Usaha', 'type' => 'income'],
+            ['name' => 'Pajak Kendaran', 'type' => 'expense'],
+            ['name' => 'Biaya Hidup', 'type' => 'expense'],
+            ['name' => 'PBB', 'type' => 'expense'],
+            ['name' => 'Renovasi Bangunan', 'type' => 'expense'],
+            ['name' => 'Pemeliharaan Kendaraan', 'type' => 'expense'],
         ]);
     }
 }

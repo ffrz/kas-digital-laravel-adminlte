@@ -22,6 +22,19 @@
         <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
       @endif
     </button>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-file-export"></i>
+      </button>
+      <div class="dropdown-menu" role="menu">
+        <a class="dropdown-item"
+          href="{{ url('cash-transaction-category/export?format=pdf') . '&' . http_build_query($filter) }}"><i
+            class="fa fa-file-pdf text-danger mr-2"></i> Ekspor PDF</a>
+        <a class="dropdown-item"
+          href="{{ url('cash-transaction-category/export?format=excel') . '&' . http_build_query($filter) }}"><i
+            class="fa fa-file-excel text-success mr-2"></i> Ekspor Excel</a>
+      </div>
+    </div>
   </li>
 @endSection
 
@@ -51,6 +64,29 @@
               </div>
             </div>
             <div class="form-group row">
+              <label class="col-form-label col-sm-4" for="type">Jenis Transaksi:</label>
+              <div class="col-sm-8">
+                <select class="form-control custom-select select2" id="type" name="type">
+                  <option value="" {{ !$filter['type'] ? 'selected' : '' }}>Semua Jenis</option>
+                  <option value="income" {{ $filter['type'] == 'income' ? 'selected' : '' }}>Pemasukan</option>
+                  <option value="expense" {{ $filter['type'] == 'expense' ? 'selected' : '' }}>Pengeluaran</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-form-label col-sm-4" for="category_id">Kategori:</label>
+              <div class="col-sm-8">
+                <select class="form-control custom-select select2" id="category_id" name="category_id">
+                  <option value="" {{ !$filter['category_id'] ? 'selected' : '' }}>Semua Kategori</option>
+                  @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ $filter['category_id'] == $category->id ? 'selected' : '' }}>
+                      {{ $category->name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
               <label class="col-form-label col-sm-4" for="period">Periode:</label>
               <div class="col-sm-8">
                 <select class="form-control custom-select" name="period" id="period">
@@ -69,8 +105,8 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit"><i class="fas fa-check mr-2"></i> Terapkan</button>
-            <button class="btn btn-default" name="action" type="submit" value="reset"><i
-                class="fa fa-filter-circle-xmark"></i> Reset Penyaringan</button>
+            <button class="btn btn-default" name="action" type="submit" value="reset">
+                <i class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
           </div>
         </div>
       </div>
@@ -84,8 +120,8 @@
                 <h5 class="m-0">Daftar Transaksi</h5>
               </div>
               <div class="col-12 col-sm-4 col-md-3 d-flex justify-content-end">
-                <input class="form-control" id="search" name="search" type="text" value="{{ $filter['search'] }}"
-                  autofocus placeholder="Cari">
+                <input class="form-control" id="search" name="search" type="text"
+                  value="{{ $filter['search'] }}" autofocus placeholder="Cari">
               </div>
             </div>
 

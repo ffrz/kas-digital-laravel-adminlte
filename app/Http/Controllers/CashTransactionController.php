@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CashAccount;
 use App\Models\CashTransaction;
 use App\Models\CashTransactionCategory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,16 +15,9 @@ use Illuminate\Support\Facades\Validator;
 
 class CashTransactionController extends Controller
 {
-    public function index(Request $request)
+
+    private function getTransactions($filter, &$filter_active)
     {
-        $filter_active = false;
-        $filter = [
-            'account_id' => (int)$request->get('account_id', $request->session()->get('cash-transaction.filter.account_id', -1)),
-            'category_id' => (int)$request->get('category_id', $request->session()->get('cash-transaction.filter.category_id', -1)),
-            'period' => $request->get('period', $request->session()->get('cash-transaction.filter.period', 'all')),
-            'type' => $request->get('type', $request->session()->get('cash-transaction.filter.type', 'all')),
-            'search' => $request->get('search', $request->session()->get('cash-transaction.filter.search', '')),
-        ];
 
         $q = CashTransaction::with(['account', 'category']);
         if ($filter['account_id'] > 0) {
@@ -80,13 +74,45 @@ class CashTransactionController extends Controller
             $q->where('description', 'like', '%' . $filter['search'] . '%');
         }
 
-        $request->session()->put('cash-transaction.filter.account_id', $filter['account_id']);
-        $items = $q->orderBy('id', 'desc')->paginate(10);
+        return $q->orderBy('id', 'desc')->paginate(10);
+    }
 
+    public function index(Request $request)
+    {
+        $filter_active = false;
+        $is_reset = $request->get('action') == 'reset';
+        $filter = [
+            'account_id' => $is_reset ? -1 : (int)$request->get('account_id', -1),
+            'category_id' => $is_reset ? -1 : (int)$request->get('category_id', -1),
+            'period' => $is_reset ? 'all' : $request->get('period', 'all'),
+            'type' => $is_reset ? 'all' : $request->get('type', 'all'),
+            'search' => $request->get('search', ''),
+        ];
+
+        $items = $this->getTransactions($filter, $filter_active);
         $accounts = CashAccount::all();
         $categories = CashTransactionCategory::all();
 
         return view('pages.cash-transaction.index', compact('items', 'accounts', 'filter', 'filter_active', 'categories'));
+    }
+
+    public function export(Request $request)
+    {
+        // ambil data akun
+        $q = CashTransaction::with('account_id');
+        $q->orderBy('date', 'desc');
+
+        $items = $q->get();
+
+        if ($request->get('format') == 'pdf') {
+            // Load data ke dalam tampilan PDF
+            $pdf = Pdf::loadView('pages.cash-transaction-category.export.cash-transaction-category-list-pdf', compact('items'));
+
+            // Unduh sebagai file PDF
+            return $pdf->download('Daftar Transaksi Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        return abort(400, 'Format tidak didukung');
     }
 
     public function edit(Request $request, $id = 0)

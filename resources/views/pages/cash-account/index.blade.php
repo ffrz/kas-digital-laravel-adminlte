@@ -19,6 +19,15 @@
         <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
       @endif
     </button>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-file-export"></i>
+      </button>
+      <div class="dropdown-menu" role="menu">
+        <a class="dropdown-item" href="{{ url('cash-account/export?format=pdf') }}"><i class="fa fa-file-pdf mr-2 text-danger"></i> Ekspor PDF</a>
+        <a class="dropdown-item" href="{{ url('cash-account/export?format=excel') }}"><i class="fa fa-file-excel mr-2 text-success"></i> Ekspor Excel</a>
+      </div>
+    </div>
   </li>
 @endSection
 
@@ -57,8 +66,8 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit"><i class="fas fa-check mr-2"></i> Terapkan</button>
-            <button class="btn btn-default" name="action" type="submit" value="reset"><i
-                class="fa fa-filter-circle-xmark"></i> Reset Penyaringan</button>
+            <button class="btn btn-default" name="action" type="reset" value="reset">
+                <i class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
           </div>
         </div>
       </div>

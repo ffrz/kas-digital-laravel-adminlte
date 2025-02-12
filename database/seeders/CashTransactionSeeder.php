@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\CashAccount;
 use App\Models\CashTransaction;
+use App\Models\CashTransactionCategory;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,9 @@ class CashTransactionSeeder extends Seeder
         $startDate = Carbon::now()->subMonths(3)->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
+        $incomeCategories = CashTransactionCategory::where('type', 'income')->pluck('id')->toArray();
+        $expenseCategories = CashTransactionCategory::where('type', 'expense')->pluck('id')->toArray();
+
         DB::beginTransaction();
         for ($date = $startDate; $date <= $endDate; $date->addDay()) {
             for ($i = 0; $i < rand(1, 5); $i++) { // Setiap hari bisa ada 1-5 transaksi
@@ -26,9 +30,13 @@ class CashTransactionSeeder extends Seeder
                     ? rand(1000, 5000000) // Maksimum pemasukan 5 juta
                     : -rand(1000, 3000000); // Maksimum pengeluaran 3 juta
 
+                $categoryId = $isIncome
+                    ? ($incomeCategories ? $incomeCategories[array_rand($incomeCategories)] : null)
+                    : ($expenseCategories ? $expenseCategories[array_rand($expenseCategories)] : null);
+
                 CashTransaction::insert([
                     'account_id' => rand(1, 2),
-                    'category_id' => rand(1, 8), // Sesuaikan dengan kategori yang tersedia
+                    'category_id' => $categoryId,
                     'amount' => $amount,
                     'date' => $date->toDateString(),
                     'description' => fake()->sentence(6),

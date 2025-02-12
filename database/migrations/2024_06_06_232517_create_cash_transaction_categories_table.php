@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('cash_transaction_categories', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['income', 'expense']);
             $table->string('name', 50)->unique();
             $table->text('description', 200)->nullable()->default(null);
             $table->timestamps();

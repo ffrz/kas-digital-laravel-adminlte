@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CashAccount;
 use App\Models\CashTransaction;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +17,11 @@ class CashAccountController extends Controller
     public function index(Request $request)
     {
         $filter_active = false;
+        $is_reset = $request->get('action') == 'reset';
         $filter = [
             'search' => $request->get('search', ''),
-            'active' => $request->get('active', 'all'),
-            'type' => $request->get('type', 'all'),
+            'active' => $is_reset ? 'all' : $request->get('active', 'all'),
+            'type' => $is_reset ? 'all' : $request->get('type', 'all'),
         ];
 
         $q = CashAccount::query();
@@ -40,6 +43,22 @@ class CashAccountController extends Controller
         $items = $q->orderBy('name', 'asc')->paginate(10);
 
         return view('pages.cash-account.index', compact('items', 'filter', 'filter_active'));
+    }
+
+    public function export(Request $request)
+    {
+        // ambil data akun
+        $accounts = CashAccount::all();
+
+        if ($request->get('format') == 'pdf') {
+            // Load data ke dalam tampilan PDF
+            $pdf = Pdf::loadView('pages.cash-account.export.cash-account-list-pdf', compact('accounts'));
+
+            // Unduh sebagai file PDF
+            return $pdf->download('Daftar Akun Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        return abort(400, 'Format tidak didukung');
     }
 
     public function edit(Request $request, $id = 0)

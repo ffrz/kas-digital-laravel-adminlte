@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,10 +26,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $filter_active = false;
+        $is_reset = $request->get('action') == 'reset';
         $filter = [
             'search' => $request->get('search', ''),
-            'status' => $request->get('status', '-1'),
-            'type' => $request->get('type', '-1'),
+            'status' => $is_reset ? -1 : $request->get('status', -1),
+            'type' => $is_reset ? -1 : $request->get('type', -1),
         ];
         $q = User::query();
         if ($filter['status'] != -1) {
@@ -44,6 +47,22 @@ class UserController extends Controller
         }
         $items = $q->orderBy('fullname', 'asc')->paginate(10);
         return view('pages.user.index', compact('items', 'filter', 'filter_active'));
+    }
+
+    public function export(Request $request)
+    {
+        // ambil data users
+        $users = User::all();
+
+        if ($request->get('format') == 'pdf') {
+            // Load data ke dalam tampilan PDF
+            $pdf = Pdf::loadView('pages.user.export.user-list-pdf', compact('users'));
+
+            // Unduh sebagai file PDF
+            return $pdf->download('Daftar Pengguna Kas Digital - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        return abort(400, 'Format tidak didukung');
     }
 
     public function edit(Request $request, $id = 0)
