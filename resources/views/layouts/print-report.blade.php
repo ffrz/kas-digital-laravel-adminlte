@@ -10,6 +10,28 @@
   <link href="/plugins/fontawesome-free/css/all.min.css" rel="stylesheet">
   <link href="/dist/css/adminlte.min.css?v=3.2.0" rel="stylesheet">
   <link href="/assets/css/report.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 10pt;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 2px 5px;
+    }
+
+    th {
+      text-align: center;
+    }
+  </style>
   @vite([])
 </head>
 

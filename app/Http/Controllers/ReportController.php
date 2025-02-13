@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CashAccount;
 use App\Models\CashTransaction;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -42,6 +44,11 @@ class ReportController extends Controller
 
         $account = $accountId !== 'all' ? CashAccount::findOrFail($accountId) : null;
         $items = $q->whereBetween('date', [$startDate, $endDate])->orderBy('date', 'asc')->get();
+
+        if ($request->get('format') == 'pdf') {
+            $pdf = Pdf::loadView('pages.report.detail.print', compact('items', 'period', 'type', 'account'));
+            return $pdf->download('Laporan Rincian Transaksi - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
 
         return view('pages.report.detail.print', compact('items', 'period', 'type', 'account'));
     }

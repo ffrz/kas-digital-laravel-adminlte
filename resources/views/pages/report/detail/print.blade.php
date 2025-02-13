@@ -7,8 +7,8 @@
 ])
 
 @section('content')
-  <h5 class="text-center">LAPORAN RINCIAN TRANSAKSI
-    {{ $type === 'income' ? 'PEMASUKAN' : ($type === 'expense' ? 'PENGELUARAN' : '') }}</h5>
+  <h4 class="text-center">LAPORAN RINCIAN TRANSAKSI
+    {{ $type === 'income' ? 'PEMASUKAN' : ($type === 'expense' ? 'PENGELUARAN' : '') }}</h4>
   @if ($account)
     <h5 class="text-center">{{ $account->name }}<h5>
   @endif
@@ -38,8 +38,8 @@
       @endphp
       @forelse ($items as $num => $item)
         <tr style="vertical-align:top;">
-          <td class="text-right">{{ $num + 1 }}</td>
-          <td class="text-right">{{ format_date($item->date) }}</td>
+          <td align=right>{{ $num + 1 }}</td>
+          <td align=right>{{ format_date($item->date) }}</td>
           @if (!$account)
             <td>{{ $item->account->name }}</td>
           @endif
@@ -51,10 +51,10 @@
             @endif
           </td>
           @if ($type !== 'all')
-            <td class="text-right">{{ format_number(abs($item->amount)) }}</td>
+            <td align=right>{{ format_number(abs($item->amount)) }}</td>
           @else
-            <td class="text-right">{{ $item->amount > 0 ? format_number(abs($item->amount)) : '-' }}</td>
-            <td class="text-right">{{ $item->amount < 0 ? format_number(abs($item->amount)) : '-' }}</td>
+            <td align=right>{{ $item->amount > 0 ? format_number(abs($item->amount)) : '-' }}</td>
+            <td align=right>{{ $item->amount < 0 ? format_number(abs($item->amount)) : '-' }}</td>
           @endif
         </tr>
         @if ($type !== 'all')
@@ -70,12 +70,12 @@
       @endforelse
     </tbody>
     <tfoot style="background:#08e;color:#fff;">
-      <th colspan="{{ $account ? 4 : 5 }}" class="text-right">Total</th>
+      <th colspan="{{ $account ? 4 : 5 }}" align=right>Total</th>
       @if ($type !== 'all')
-        <th class="text-right">{{ format_number($total_amount) }}</th>
+        <th align=right>{{ format_number($total_amount) }}</th>
       @else
-        <th class="text-right">{{ format_number($total_income) }}</th>
-        <th class="text-right">{{ format_number($total_expense) }}</th>
+        <th align=right>{{ format_number($total_income) }}</th>
+        <th align=right>{{ format_number($total_expense) }}</th>
       @endif
     </tfoot>
   </table>
