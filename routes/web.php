@@ -29,17 +29,6 @@ use App\Http\Middleware\Authenticate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 setlocale(LC_TIME, 'id_ID');
 Carbon::setLocale('id_ID');
 
@@ -82,6 +71,8 @@ Route::middleware([Authenticate::class])->group(function () {
 
     Route::controller(ReportController::class)->prefix('report')->group(function () {
         Route::get('', 'index');
+        Route::get('cash-flow', 'cashFlow');
+        Route::get('income-expense', 'incomeExpense');
         Route::get('detail', 'detail');
     });
 

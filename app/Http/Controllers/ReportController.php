@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hak Cipta (C) 2025 Fahmi Fauzi Rahman
  * Seluruh Hak Cipta Dilindungi Undang-Undang.
@@ -32,12 +33,52 @@ class ReportController extends Controller
         return view('pages.report.index');
     }
 
+    public function incomeExpense(Request $request)
+    {
+        if (!$request->has('period')) {
+            return view('pages.report.income-expense.index');
+        }
+
+        $period = extract_daterange_from_input($request->get('period'), date('01-m-Y') . ' - ' . date('t-m-Y'));
+        $startDate = datetime_from_input($period[0]);
+        $endDate = datetime_from_input($period[1]);
+
+        $items = CashAccount::getIncomeExpenseReport($startDate, $endDate);
+
+        if ($request->get('format') == 'pdf') {
+            $pdf = Pdf::loadView('pages.report.income-expense.print', compact('items', 'period'));
+            return $pdf->download('Laporan Pemasukan dan Pengeluaran - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        return view('pages.report.income-expense.print', compact('items', 'period'));
+    }
+
+    public function cashFlow(Request $request)
+    {
+        if (!$request->has('period')) {
+            return view('pages.report.cash-flow.index');
+        }
+
+        $period = extract_daterange_from_input($request->get('period'), date('01-m-Y') . ' - ' . date('t-m-Y'));
+        $startDate = datetime_from_input($period[0]);
+        $endDate = datetime_from_input($period[1]);
+
+        $items = CashAccount::getCashFlowReport($startDate, $endDate);
+
+        if ($request->get('format') == 'pdf') {
+            $pdf = Pdf::loadView('pages.report.cash-flow.print', compact('items', 'period'));
+            return $pdf->download('Laporan Arus Kas - ' . Carbon::now()->format('dmY_His') . '.pdf');
+        }
+
+        return view('pages.report.cash-flow.print', compact('items', 'period'));
+    }
+
     public function detail(Request $request)
     {
         $type = $request->get('type', 'all');
 
         if (!$request->has('period')) {
-            $accounts = CashAccount::all();
+            $accounts = CashAccount::getAllAccounts();
             return view('pages.report.detail.index', compact('accounts', 'type'));
         }
 
@@ -53,8 +94,7 @@ class ReportController extends Controller
 
         if ($type == 'income') {
             $q->where('amount', '>', 0);
-        }
-        else if ($type == 'expense') {
+        } else if ($type == 'expense') {
             $q->where('amount', '<', 0);
         }
 

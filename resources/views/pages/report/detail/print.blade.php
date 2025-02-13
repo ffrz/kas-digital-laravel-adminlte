@@ -7,13 +7,12 @@
 ])
 
 @section('content')
-  <h4 class="text-center">LAPORAN RINCIAN TRANSAKSI
+  <h4 style="text-align:center">LAPORAN RINCIAN TRANSAKSI
     {{ $type === 'income' ? 'PEMASUKAN' : ($type === 'expense' ? 'PENGELUARAN' : '') }}</h4>
   @if ($account)
-    <h5 class="text-center">{{ $account->name }}<h5>
+    <h5 style="text-align:center">{{ $account->name }}<h5>
   @endif
-  <h6 class="text-center">Periode: {{ $period[0] . ' - ' . $period[1] }}</h6>
-
+  <h5 style="text-align:center">Periode: {{ $period[0] . ' - ' . $period[1] }}</h5>
   <table class="report-table">
     <thead style="background:#08e;color:#fff;">
       <th>No</th>
@@ -23,10 +22,10 @@
       @endif
       <th>Kategori</th>
       <th>Deskripsi</th>
-      @if ($type !== 'income')
+      @if ($type == 'income' || $type == 'all')
         <th>Pemasukan</th>
       @endif
-      @if ($type !== 'expense')
+      @if ($type == 'expense' || $type == 'all')
         <th>Pengeluaran</th>
       @endif
     </thead>
@@ -38,8 +37,8 @@
       @endphp
       @forelse ($items as $num => $item)
         <tr style="vertical-align:top;">
-          <td align=right>{{ $num + 1 }}</td>
-          <td align=right>{{ format_date($item->date) }}</td>
+          <td style="text-align:right">{{ $num + 1 }}</td>
+          <td style="text-align:right">{{ format_date($item->date) }}</td>
           @if (!$account)
             <td>{{ $item->account->name }}</td>
           @endif
@@ -51,10 +50,10 @@
             @endif
           </td>
           @if ($type !== 'all')
-            <td align=right>{{ format_number(abs($item->amount)) }}</td>
+            <td style="text-align:right">{{ format_number(abs($item->amount)) }}</td>
           @else
-            <td align=right>{{ $item->amount > 0 ? format_number(abs($item->amount)) : '-' }}</td>
-            <td align=right>{{ $item->amount < 0 ? format_number(abs($item->amount)) : '-' }}</td>
+            <td style="text-align:right">{{ $item->amount > 0 ? format_number(abs($item->amount)) : '-' }}</td>
+            <td style="text-align:right">{{ $item->amount < 0 ? format_number(abs($item->amount)) : '-' }}</td>
           @endif
         </tr>
         @if ($type !== 'all')
@@ -70,12 +69,12 @@
       @endforelse
     </tbody>
     <tfoot style="background:#08e;color:#fff;">
-      <th colspan="{{ $account ? 4 : 5 }}" align=right>Total</th>
+      <th colspan="{{ $account ? 4 : 5 }}" style="text-align:right">Jumlah</th>
       @if ($type !== 'all')
-        <th align=right>{{ format_number($total_amount) }}</th>
+        <th style="text-align:right">{{ format_number($total_amount) }}</th>
       @else
-        <th align=right>{{ format_number($total_income) }}</th>
-        <th align=right>{{ format_number($total_expense) }}</th>
+        <th style="text-align:right">{{ format_number($total_income) }}</th>
+        <th style="text-align:right">{{ format_number($total_expense) }}</th>
       @endif
     </tfoot>
   </table>

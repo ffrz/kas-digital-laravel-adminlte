@@ -38,13 +38,13 @@ class UserSeeder extends Seeder
             'is_admin' => true,
             'fullname' => 'Administrator',
         ]);
-        User::insert([
-            'username' => 'kasir',
-            'password' => Hash::make('12345'),
-            'is_active' => true,
-            'is_admin' => false,
-            'fullname' => 'Kasir',
-        ]);
+        // User::insert([
+        //     'username' => 'kasir',
+        //     'password' => Hash::make('12345'),
+        //     'is_active' => true,
+        //     'is_admin' => false,
+        //     'fullname' => 'Kasir',
+        // ]);
 
         // $faker = \Faker\Factory::create('id_ID');
         // DB::beginTransaction();

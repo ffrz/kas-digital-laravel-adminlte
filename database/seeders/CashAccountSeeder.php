@@ -20,7 +20,6 @@ namespace Database\Seeders;
 
 use App\Models\CashAccount;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
 
 class CashAccountSeeder extends Seeder
 {
@@ -30,17 +29,17 @@ class CashAccountSeeder extends Seeder
     public function run(): void
     {
         CashAccount::insert([
-            'name' => 'Kas Bendahara',
+            'name' => 'Kas Utama',
             'type' => 'cash',
             'balance' => 0,
             'active' => true,
         ]);
 
         CashAccount::insert([
-            'name' => 'Rek Mandiri',
+            'name' => 'Kas Bank',
             'type' => 'bank',
             'bank' => 'Mandiri',
-            'bank_account_number' => '1340001231234',
+            'bank_account_number' => '1234567',
             'bank_account_name' => 'Sunda Palapa',
             'balance' => 0,
             'active' => true,
