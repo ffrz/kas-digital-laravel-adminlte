@@ -43,9 +43,9 @@
 
               <h3>Laporan Rincian Transaksi</h3>
               <ul>
-                <li><a href="{{ url('report/') }}">Laporan Transaksi berdasarkan Periode</a></li>
-                <li><a href="{{ url('report/') }}">Laporan Pemasukan</a></li>
-                <li><a href="{{ url('report/') }}">Laporan Pengeluaran</a></li>
+                <li><a href="{{ url('report/detail') }}">Laporan Transaksi berdasarkan Periode</a></li>
+                <li><a href="{{ url('report/detail?type=income') }}">Laporan Pemasukan</a></li>
+                <li><a href="{{ url('report/detail?type=expense') }}">Laporan Pengeluaran</a></li>
               </ul>
 
               <h3>Laporan Analitik dan Insight</h3>

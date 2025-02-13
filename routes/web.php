@@ -66,6 +66,7 @@ Route::middleware([Authenticate::class])->group(function () {
 
     Route::controller(ReportController::class)->prefix('report')->group(function () {
         Route::get('', 'index');
+        Route::get('detail', 'detail');
     });
 
     Route::controller(CashAccountController::class)->prefix('cash-account')->group(function () {

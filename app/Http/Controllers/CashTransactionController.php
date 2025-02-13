@@ -20,7 +20,6 @@ class CashTransactionController extends Controller
 {
     private function getTransactions($filter, &$filter_active, $apply_search = true)
     {
-
         $q = CashTransaction::with(['account', 'category']);
         if ($filter['account_id'] > 0) {
             $filter_active = true;

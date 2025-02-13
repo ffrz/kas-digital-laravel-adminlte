@@ -45,7 +45,7 @@
 
         {{-- Report Menu --}}
         <li class="nav-item {{ $menu_active == 'report' ? 'menu-open' : '' }}">
-          <a class="nav-link {{ $menu_active == 'report' ? 'active' : '' }}" href="report/">
+          <a class="nav-link {{ $menu_active == 'report' ? 'active' : '' }}" href="{{ url('report') }}">
             <i class="nav-icon fas fa-file-waveform"></i>
             <p>Laporan</p>
           </a>
