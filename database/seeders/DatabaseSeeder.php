@@ -29,9 +29,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            CashTransactionCategorySeeder::class,
-            CashAccountSeeder::class,
-            CashTransactionSeeder::class
+            // CashTransactionCategorySeeder::class,
+            // CashAccountSeeder::class,
+            // CashTransactionSeeder::class
         ]);
     }
 }
