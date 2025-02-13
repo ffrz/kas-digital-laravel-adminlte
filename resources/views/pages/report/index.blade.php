@@ -3,7 +3,6 @@
     'nav_active' => 'report',
 ])
 
-
 @section('content')
   <section class="content">
     <div class="card">
@@ -11,7 +10,7 @@
         <div class="container-fluid">
           <div class="row">
             <div clas="col-12">
-              <h3>Laporan Keuangan Utama</h3>
+              <h3>Laporan Rekapitulasi</h3>
               <ul>
                 <li><a href="{{ url('report/') }}">Laporan Rekapitulasi Pemasukan dan Pengeluaran</a></li>
 
@@ -38,14 +37,14 @@
                     Isi laporan:
                     - Saldo akhir di setiap akun kas/bank.
                 --}}
-                <li><a href="{{ url('report/') }}">Laporan Saldo Akun</a></li>
+                <li><a href="{{ url('report/account-balance') }}">Laporan Saldo Akun</a></li>
               </ul>
 
-              <h3>Laporan Rincian Transaksi</h3>
+              <h3>Laporan Rincian</h3>
               <ul>
-                <li><a href="{{ url('report/detail') }}">Laporan Transaksi berdasarkan Periode</a></li>
-                <li><a href="{{ url('report/detail?type=income') }}">Laporan Pemasukan</a></li>
-                <li><a href="{{ url('report/detail?type=expense') }}">Laporan Pengeluaran</a></li>
+                <li><a href="{{ url('report/detail') }}">Laporan Rincian Transaksi</a></li>
+                <li><a href="{{ url('report/detail?type=income') }}">Laporan Rincian Pemasukan</a></li>
+                <li><a href="{{ url('report/detail?type=expense') }}">Laporan Rincian Pengeluaran</a></li>
               </ul>
 
               <h3>Laporan Analitik dan Insight</h3>
