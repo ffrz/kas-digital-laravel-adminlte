@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hak Cipta (C) 2025 Fahmi Fauzi Rahman
  * Seluruh Hak Cipta Dilindungi Undang-Undang.
@@ -42,6 +43,9 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Menampilkan daftar pengguna dengan filter pencarian dan status.
+     */
     public function index(Request $request)
     {
         $filter_active = false;
@@ -61,13 +65,18 @@ class UserController extends Controller
             $q->where('is_admin', '=', $filter['type']);
         }
         if (!empty($filter['search'])) {
-            $q->where('username', 'like', '%' . $filter['search'] . '%');
-            $q->orWhere('fullname', 'like', '%' . $filter['search'] . '%');
+            $q->where(function ($query) use ($filter) {
+                $query->where('username', 'like', '%' . $filter['search'] . '%')
+                    ->orWhere('fullname', 'like', '%' . $filter['search'] . '%');
+            });
         }
         $items = $q->orderBy('fullname', 'asc')->paginate(10);
         return view('pages.user.index', compact('items', 'filter', 'filter_active'));
     }
 
+    /**
+     * Mengekspor daftar pengguna ke dalam format PDF atau Excel.
+     */
     public function export(Request $request)
     {
         // ambil data users
@@ -134,15 +143,12 @@ class UserController extends Controller
 
             if (!$id) {
                 $rules['username'] = 'required|unique:users,username,' . $id . '|min:3|max:40';
+                $rules['password'] = 'required|' . self::VALIDATION_RULE_PASSWORD;
             } else if (!empty($request->password)) {
                 $rules['password'] = self::VALIDATION_RULE_PASSWORD;
             }
 
-            $data = $request->all();
-            $validator = Validator::make($data, $rules);
-            if (!$request->validate($rules)) {
-                return redirect()->back()->withInput()->withErrors($validator);
-            }
+            $data = $request->validate($rules);
 
             fill_with_default_value($data, ['is_active', 'is_admin'], false);
 
@@ -166,6 +172,9 @@ class UserController extends Controller
         return view('pages.user.edit', compact('user'));
     }
 
+    /**
+     * Menampilkan dan menyimpan perubahan profil pengguna.
+     */
     public function profile(Request $request)
     {
         if (!$user = User::find(Auth::user()->id)) {
@@ -206,6 +215,9 @@ class UserController extends Controller
         return view('pages.user.profile', compact('user'));
     }
 
+    /**
+     * Menghapus pengguna kecuali admin utama.
+     */
     public function delete(Request $request, $id)
     {
         $user = User::findOrFail($id);
