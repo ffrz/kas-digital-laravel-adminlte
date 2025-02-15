@@ -65,8 +65,8 @@
       </div>
     </div>
   </div>
-  <div class="mt-4 text-muted">&copy; Shift IT Solution 2024</div>
-  <div class="mt-0 text-muted"><a href="https://shiftech.my.id">www.shiftech.my.id</a></div>
+  <div class="mt-4 text-muted">&copy; Fahmi Fauzi Rahman {{ date('Y') }}</div>
+  <div class="mt-0 text-muted"><a href="https://ffr.shiftech.my.id">ffr.shiftech.my.id</a></div>
   <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
   <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
