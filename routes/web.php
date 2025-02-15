@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hak Cipta (C) 2025 Fahmi Fauzi Rahman
  * Seluruh Hak Cipta Dilindungi Undang-Undang.
@@ -26,19 +27,22 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\GuestOnly;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 setlocale(LC_TIME, 'id_ID');
 Carbon::setLocale('id_ID');
 
-Route::get('login', [AuthController::class, 'login'])->name('login');
-Route::post('login', [AuthController::class, 'authenticate']);
+Route::middleware([GuestOnly::class])->group(function () {
+    Route::redirect('/', '/login');
+    Route::get('login', [AuthController::class, 'login'])->name('login');
+    Route::post('login', [AuthController::class, 'authenticate']);
+});
 
 Route::middleware([Authenticate::class])->group(function () {
     Route::redirect('/', '/dashboard');
     Route::get('logout', [AuthController::class, 'logout']);
-
     Route::get('dashboard', [DashboardController::class, 'index']);
 
     Route::controller(SettingsController::class)->prefix('settings')->group(function () {
@@ -52,6 +56,7 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::match(['get', 'post'], 'edit/{id}', 'edit');
         Route::match(['get', 'post'], 'delete/{id}', 'delete');
         Route::match(['get', 'post'], 'profile', 'profile');
+        Route::get('data', 'datatable')->name('user.data');
     });
 
     Route::controller(CashTransactionCategoryController::class)->prefix('cash-transaction-category')->group(function () {
@@ -83,13 +88,11 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::get('delete/{id}', 'delete');
     });
 
-    Route::get('refresh-csrf', function () {
-        return csrf_token();
-    });
-
     Route::controller(AjaxController::class)->prefix('ajax')->group(function () {
         Route::post('add-cash-transaction-category', 'addCashTransactionCategory');
     });
 });
 
-Route::redirect('/', '/login');
+Route::get('refresh-csrf', function () {
+    return csrf_token();
+});

@@ -33,16 +33,15 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
-
-        // ignore access to login page
-        if ($request->path() == 'login' && $user) {
-            if ($user->role_id == 1)
+        // Periksa apakah user sudah login
+        if (Auth::check()) {
+            // Jika user sudah login dan mengakses halaman login, redirect ke dashboard/home
+            if ($request->is('login')) {
                 return redirect('/');
-            return redirect('/');
-        }
-        else if (!$user) {
-            return redirect(route('login'));
+            }
+        } else {
+            // Jika user belum login, redirect ke halaman login
+            return redirect()->route('login');
         }
 
         return $next($request);
