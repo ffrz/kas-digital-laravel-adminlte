@@ -45,11 +45,6 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);
     Route::get('dashboard', [DashboardController::class, 'index']);
 
-    Route::controller(SettingsController::class)->prefix('settings')->group(function () {
-        Route::get('', 'edit');
-        Route::post('save', 'save');
-    });
-
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'index');
         Route::get('export', 'export');

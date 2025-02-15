@@ -30,7 +30,6 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $filter_active = true; // set selalu true karena periode selalu aktif
         $periods = [
             'today' => 'Hari Ini',
             'yesterday' => 'Kemarin',
@@ -70,7 +69,6 @@ class DashboardController extends Controller
 
         return view('pages.dashboard.index', compact(
             'data',
-            'filter_active',
             'filter',
             'accounts',
             'cashflow_chart_data',
