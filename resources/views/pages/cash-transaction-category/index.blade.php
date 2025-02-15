@@ -1,6 +1,5 @@
 @extends('layouts.default', [
-    'title' => 'Kategori Transaksi',
-    'menu_active' => 'finance',
+    'title' => 'Kategori',
     'nav_active' => 'cash-transaction-category',
 ])
 

@@ -4,7 +4,6 @@
 
 @extends('layouts.default', [
     'title' => $title,
-    'menu_active' => 'finance',
     'nav_active' => 'cash-transaction',
     'form_action' => url('cash-transaction/edit/' . (int) $item->id),
 ])

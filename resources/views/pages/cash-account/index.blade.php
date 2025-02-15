@@ -1,10 +1,5 @@
-@php
-  use App\Models\AclResource;
-@endphp
-
 @extends('layouts.default', [
-    'title' => 'Akun / Rekening',
-    'menu_active' => 'finance',
+    'title' => 'Akun',
     'nav_active' => 'cash-account',
 ])
 

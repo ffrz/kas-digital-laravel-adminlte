@@ -1,10 +1,5 @@
-@php
-  use App\Models\AclResource;
-@endphp
-
 @extends('layouts.default', [
     'title' => 'Transaksi',
-    'menu_active' => 'finance',
     'nav_active' => 'cash-transaction',
 ])
 
@@ -136,7 +131,7 @@
                     <th class="d-none d-md-table-cell">Akun</th>
                     <th class="d-none d-md-table-cell">Kategori</th>
                     <th class="d-none d-md-table-cell">Uraian</th>
-                    <th>Jumlah</th>
+                    <th class="d-none d-md-table-cell">Jumlah</th>
                     @if (Auth::user()->is_admin)
                       <th style="width:5%">Aksi</th>
                     @endif
@@ -152,6 +147,9 @@
                             <div><i class="fa fa-wallet mr-2"></i>{{ $item->account->name }}</div>
                             <div><i class="fa fa-tag mr-2"></i>{{ optional($item->category)->name ?? 'Tanpa Kategori' }}</div>
                             <div><i class="fa fa-note-sticky mr-2"></i>{{ $item->description }}</div>
+                            <div class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }}">
+                                <i class="fa fa-money-bill mr-2"></i> {{ ($item->amount > 0 ? '+' : '') . 'Rp. ' . format_number($item->amount) }}
+                            </div>
                         </div>
                       </td>
                       <td class="d-none d-md-table-cell text-nowrap">{{ format_date($item->date) }}</td>
@@ -159,7 +157,7 @@
                       <td class="d-none d-md-table-cell">{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}
                       </td>
                       <td class="d-none d-md-table-cell">{{ $item->description }}</td>
-                      <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
+                      <td class="d-none d-md-table-cell {{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
                         {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
                       @if (Auth::user()->is_admin)
                         <td class="text-center">
