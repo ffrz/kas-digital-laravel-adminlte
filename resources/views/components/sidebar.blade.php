@@ -19,8 +19,7 @@
             <p>Dashboard</p>
           </a>
         </li>
-
-        {{-- Expense Menu Begin --}}
+        <li class="nav-item spacer"></li>
         <li class="nav-item">
           <a class="nav-link {{ $nav_active == 'cash-transaction' ? 'active' : '' }}"
             href="{{ url('cash-transaction') }}">
@@ -41,39 +40,21 @@
             <p>Akun / Rekening</p>
           </a>
         </li>
-        {{-- End of Expense Menu --}}
-
-        {{-- Report Menu --}}
+        @if (Auth::user()->is_admin)
+          <li class="nav-item">
+            <a class="nav-link {{ $nav_active == 'user' ? 'active' : '' }}" href="{{ url('user') }}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>Pengguna</p>
+            </a>
+          </li>
+        @endif
+        <li class="nav-item spacer"></li>
         <li class="nav-item {{ $menu_active == 'report' ? 'menu-open' : '' }}">
           <a class="nav-link {{ $menu_active == 'report' ? 'active' : '' }}" href="{{ url('report') }}">
             <i class="nav-icon fas fa-file-waveform"></i>
             <p>Laporan</p>
           </a>
         </li>
-        {{-- End Report Menu --}}
-
-        {{-- System Menu --}}
-        @if (Auth::user()->is_admin)
-        <li class="nav-item {{ $menu_active == 'system' ? 'menu-open' : '' }}">
-          <a class="nav-link {{ $menu_active == 'system' ? 'active' : '' }}" href="#">
-            <i class="nav-icon fas fa-gears"></i>
-            <p>
-              Pengaturan
-              <i class="right fas fa-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a class="nav-link {{ $nav_active == 'user' ? 'active' : '' }}" href="{{ url('user') }}">
-                <i class="nav-icon fas fa-users"></i>
-                <p>Pengguna</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        @endif
-        {{-- End of System  menu --}}
-
         <li class="nav-item spacer"></li>
         <li class="nav-item">
           <a class="nav-link {{ $nav_active == 'profile' ? 'active' : '' }}" href="{{ url('user/profile/') }}">

@@ -94,8 +94,7 @@
                   <option value="today" {{ $filter['period'] == 'today' ? 'selected' : '' }}>Hari Ini</option>
                   <option value="yesterday" {{ $filter['period'] == 'yesterday' ? 'selected' : '' }}>Kemarin</option>
                   <option value="this_week" {{ $filter['period'] == 'this_week' ? 'selected' : '' }}>Minggu Ini</option>
-                  <option value="prev_week" {{ $filter['period'] == 'prev_week' ? 'selected' : '' }}>Minggu Kemarin
-                  </option>
+                  <option value="prev_week" {{ $filter['period'] == 'prev_week' ? 'selected' : '' }}>Minggu Kemarin</option>
                   <option value="this_month" {{ $filter['period'] == 'this_month' ? 'selected' : '' }}>Bulan Ini</option>
                   <option value="prev_month" {{ $filter['period'] == 'prev_month' ? 'selected' : '' }}>Bulan Kemarin
                   </option>
@@ -106,7 +105,7 @@
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit"><i class="fas fa-check mr-2"></i> Terapkan</button>
             <button class="btn btn-default" name="action" type="submit" value="reset">
-                <i class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
+              <i class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
           </div>
         </div>
       </div>
@@ -117,7 +116,7 @@
           <div class="col-md-12">
             <div class="row mb-3">
               <div class="col-12 col-sm-8 col-md-9 d-flex align-items-center">
-                <h5 class="m-0">Daftar Transaksi</h5>
+                <h5 class="m-0 my-2">Daftar Transaksi</h5>
               </div>
               <div class="col-12 col-sm-4 col-md-3 d-flex justify-content-end">
                 <input class="form-control" id="search" name="search" type="text"
@@ -129,11 +128,14 @@
               <table class="table-bordered table-striped table-sm table">
                 <thead>
                   <tr>
-                    <th style="width:1%">ID</th>
-                    <th style="width:1%">Tanggal</th>
-                    <th>Akun</th>
-                    <th>Kategori</th>
-                    <th>Uraian</th>
+                    <th>
+                      <span class="d-block d-md-none">Rincian</span>
+                      <span class="d-none d-md-block">ID</span>
+                    </th>
+                    <th class="d-none d-md-table-cell">Tanggal</th>
+                    <th class="d-none d-md-table-cell">Akun</th>
+                    <th class="d-none d-md-table-cell">Kategori</th>
+                    <th class="d-none d-md-table-cell">Uraian</th>
                     <th>Jumlah</th>
                     @if (Auth::user()->is_admin)
                       <th style="width:5%">Aksi</th>
@@ -143,11 +145,20 @@
                 <tbody>
                   @forelse ($items as $item)
                     <tr>
-                      <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
-                      <td class="text-nowrap">{{ format_date($item->date) }}</td>
-                      <td>{{ $item->account->name }}</td>
-                      <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
-                      <td>{{ $item->description }}</td>
+                      <td>
+                        <span class="d-none d-md-block">{{ $item->idFormatted() }}</span>
+                        <div class="d-block d-md-none">
+                            <div><i class="fa fa-calendar mr-2"></i>#{{ $item->idFormatted() }} - <i class="fa fa-date mr-2"></i>{{ format_date($item->date) }}</div>
+                            <div><i class="fa fa-wallet mr-2"></i>{{ $item->account->name }}</div>
+                            <div><i class="fa fa-tag mr-2"></i>{{ optional($item->category)->name ?? 'Tanpa Kategori' }}</div>
+                            <div><i class="fa fa-note-sticky mr-2"></i>{{ $item->description }}</div>
+                        </div>
+                      </td>
+                      <td class="d-none d-md-table-cell text-nowrap">{{ format_date($item->date) }}</td>
+                      <td class="d-none d-md-table-cell">{{ $item->account->name }}</td>
+                      <td class="d-none d-md-table-cell">{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}
+                      </td>
+                      <td class="d-none d-md-table-cell">{{ $item->description }}</td>
                       <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
                         {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
                       @if (Auth::user()->is_admin)
