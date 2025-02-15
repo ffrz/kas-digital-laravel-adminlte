@@ -67,335 +67,344 @@
 
   <section class="content">
     <div class="container-fluid">
-      <div class="row">
-        <div clas="col-12">
-          <h5 class="m-2 mb-3">Ringkasan Aktual</h5>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md-4">
-          <div class="small-box bg-blue">
-            <div class="inner">
-              <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_balance']) }}</h4>
-              <p>Total Saldo Aktual</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-hand-holding-dollar"></i>
-            </div>
-            <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+      @if (!empty($data['active_cash_account_count']))
+        <div class="row">
+          <div clas="col-12">
+            <h5 class="m-2 mb-3">Ringkasan Aktual</h5>
           </div>
         </div>
-        <div class="col-12 col-md-4">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h4>{{ $data['active_cash_account_count'] }} Akun Kas</h4>
-              <p>Akun Kas Aktif</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-wallet"></i>
-            </div>
-            <a href="cash-account?active=1" class="small-box-footer">
-              <i class="fas fa-arrow-circle-right"></i>
-            </a>
-          </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h4>{{ $data['active_user_count'] }} Pengguna</h4>
-              <p>Pengguna Aktif</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-user"></i>
-            </div>
-            <a href="user?active=1" class="small-box-footer">
-              <i class="fas fa-arrow-circle-right"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Distribusi Akun Kas</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <div class="small-box bg-blue">
+              <div class="inner">
+                <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_balance']) }}</h4>
+                <p>Total Saldo Aktual</p>
               </div>
-            </div>
-            <div class="card-body">
-              <canvas id="account-balance-distribution-chart"
-                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div clas="col-12">
-          <h5 class="m-2 mb-3">Ringkasan {{ $data['selected_period'] }} untuk {{ $data['selected_account_name'] }}</h5>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md-4">
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_income']) }}</h4>
-              <p>Total Pemasukan</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-arrow-right-to-bracket"></i>
-            </div>
-            <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_expense']) }}</h4>
-              <p>Total Pengeluaran</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-arrow-right-from-bracket"></i>
-            </div>
-            <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="small-box bg-warning">
-            <div class="inner">
-              <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['cash_balance']) }}</h4>
-              <p>Arus Kas Bersih</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-money-bill-wave"></i>
-            </div>
-            <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 col-md-4">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Pemasukan vs Pengeluaran</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
+              <div class="icon">
+                <i class="fa fa-hand-holding-dollar"></i>
               </div>
-            </div>
-            <div class="card-body">
-              <canvas id="income-vs-expense-chart"
-                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Pemasukan per Kategori</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
+          <div class="col-12 col-md-4">
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h4>{{ $data['active_cash_account_count'] }} Akun Kas</h4>
+                <p>Akun Kas Aktif</p>
               </div>
-            </div>
-            <div class="card-body">
-              <canvas id="income-by-category-chart"
-                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Pengeluaran per Kategori</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
+              <div class="icon">
+                <i class="fas fa-wallet"></i>
               </div>
+              <a href="cash-account?active=1" class="small-box-footer">
+                <i class="fas fa-arrow-circle-right"></i>
+              </a>
             </div>
-            <div class="card-body">
-              <canvas id="expense-by-category-chart"
-                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h4>{{ $data['active_user_count'] }} Pengguna</h4>
+                <p>Pengguna Aktif</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user"></i>
+              </div>
+              <a href="user?active=1" class="small-box-footer">
+                <i class="fas fa-arrow-circle-right"></i>
+              </a>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="d-flex justify-content-between">
-                <h3 class="card-title">Arus Kas</h3>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Distribusi Akun Kas</h3>
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
                   </button>
                 </div>
               </div>
-            </div>
-            <div class="card-body">
-              <div class="position-relative mb-4">
-                <canvas id="cashflow-chart" height="200"></canvas>
-              </div>
-              <div class="d-flex justify-content-end flex-row">
-                <span class="mr-2">
-                  <i class="fas fa-square text-success"></i> Pemasukan
-                </span>
-                <span>
-                  <i class="fas fa-square text-danger"></i> Pengeluaran
-                </span>
+              <div class="card-body">
+                <canvas id="account-balance-distribution-chart"
+                  style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header border-0">
-              <h3 class="card-title">5 Transaksi Terakhir</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-              </div>
-            </div>
-            <div class="card-body py-0">
-              <div class="table-responsive p-0">
-                <table class="table-bordered table-striped table-sm table">
-                  <thead>
-                    <tr>
-                      <th style="width:1%">ID</th>
-                      <th style="width:1%">Tanggal</th>
-                      <th>Akun</th>
-                      <th>Kategori</th>
-                      <th>Uraian</th>
-                      <th>Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($data['recent_transactions'] as $item)
-                      <tr>
-                        <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
-                        <td class="text-nowrap">{{ format_date($item->date) }}</td>
-                        <td>{{ $item->account->name }}</td>
-                        <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
-                          {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
-                      </tr>
-                    @empty
-                      <tr class="empty">
-                        <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
-                      </tr>
-                    @endforelse
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-lg-6 col-12">
-          <div class="card">
-            <div class="card-header border-0">
-              <h3 class="card-title">Top 5 Pemasukan</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
+        <div class="row">
+          <div clas="col-12">
+            <h5 class="m-2 mb-3">Ringkasan {{ $data['selected_period'] }} untuk {{ $data['selected_account_name'] }}
+            </h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <div class="small-box bg-green">
+              <div class="inner">
+                <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_income']) }}</h4>
+                <p>Total Pemasukan</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-arrow-right-to-bracket"></i>
+              </div>
+              <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="small-box bg-red">
+              <div class="inner">
+                <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['total_expense']) }}</h4>
+                <p>Total Pengeluaran</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-arrow-right-from-bracket"></i>
+              </div>
+              <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h4><sup style="font-size: 20px">Rp. </sup>{{ format_number($data['cash_balance']) }}</h4>
+                <p>Arus Kas Bersih</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-money-bill-wave"></i>
+              </div>
+              <a href="cash-account?active=1" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Pemasukan vs Pengeluaran</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="income-vs-expense-chart"
+                  style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
               </div>
             </div>
-            <div class="card-body py-0">
-              <div class="table-responsive p-0">
-                <table class="table-bordered table-striped table-sm table">
-                  <thead>
-                    <tr>
-                      <th style="width:1%">ID</th>
-                      <th style="width:1%">Tanggal</th>
-                      <th>Akun</th>
-                      <th>Kategori</th>
-                      <th>Uraian</th>
-                      <th>Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($data['top_incomes'] as $item)
-                      <tr>
-                        <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
-                        <td class="text-nowrap">{{ format_date($item->date) }}</td>
-                        <td>{{ $item->account->name }}</td>
-                        <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
-                          {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
-                      </tr>
-                    @empty
-                      <tr class="empty">
-                        <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
-                      </tr>
-                    @endforelse
-                  </tbody>
-                </table>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Pemasukan per Kategori</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="income-by-category-chart"
+                  style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Pengeluaran per Kategori</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="expense-by-category-chart"
+                  style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-6 col-12">
-          <div class="card">
-            <div class="card-header border-0">
-              <h3 class="card-title">Top 5 Pengeluaran</h3>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                  <h3 class="card-title">Arus Kas</h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="card-body py-0">
-              <div class="table-responsive p-0">
-                <table class="table-bordered table-striped table-sm table">
-                  <thead>
-                    <tr>
-                      <th style="width:1%">ID</th>
-                      <th style="width:1%">Tanggal</th>
-                      <th>Akun</th>
-                      <th>Kategori</th>
-                      <th>Uraian</th>
-                      <th>Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($data['top_expenses'] as $item)
-                      <tr>
-                        <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
-                        <td class="text-nowrap">{{ format_date($item->date) }}</td>
-                        <td>{{ $item->account->name }}</td>
-                        <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
-                          {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
-                      </tr>
-                    @empty
-                      <tr class="empty">
-                        <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
-                      </tr>
-                    @endforelse
-                  </tbody>
-                </table>
+              <div class="card-body">
+                <div class="position-relative mb-4">
+                  <canvas id="cashflow-chart" height="200"></canvas>
+                </div>
+                <div class="d-flex justify-content-end flex-row">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-success"></i> Pemasukan
+                  </span>
+                  <span>
+                    <i class="fas fa-square text-danger"></i> Pengeluaran
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0">
+                <h3 class="card-title">5 Transaksi Terakhir</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body py-0">
+                <div class="table-responsive p-0">
+                  <table class="table-bordered table-striped table-sm table">
+                    <thead>
+                      <tr>
+                        <th style="width:1%">ID</th>
+                        <th style="width:1%">Tanggal</th>
+                        <th>Akun</th>
+                        <th>Kategori</th>
+                        <th>Uraian</th>
+                        <th>Jumlah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @forelse ($data['recent_transactions'] as $item)
+                        <tr>
+                          <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
+                          <td class="text-nowrap">{{ format_date($item->date) }}</td>
+                          <td>{{ $item->account->name }}</td>
+                          <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
+                          <td>{{ $item->description }}</td>
+                          <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
+                            {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
+                        </tr>
+                      @empty
+                        <tr class="empty">
+                          <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
+                        </tr>
+                      @endforelse
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6 col-12">
+            <div class="card">
+              <div class="card-header border-0">
+                <h3 class="card-title">Top 5 Pemasukan</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body py-0">
+                <div class="table-responsive p-0">
+                  <table class="table-bordered table-striped table-sm table">
+                    <thead>
+                      <tr>
+                        <th style="width:1%">ID</th>
+                        <th style="width:1%">Tanggal</th>
+                        <th>Akun</th>
+                        <th>Kategori</th>
+                        <th>Uraian</th>
+                        <th>Jumlah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @forelse ($data['top_incomes'] as $item)
+                        <tr>
+                          <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
+                          <td class="text-nowrap">{{ format_date($item->date) }}</td>
+                          <td>{{ $item->account->name }}</td>
+                          <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
+                          <td>{{ $item->description }}</td>
+                          <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
+                            {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
+                        </tr>
+                      @empty
+                        <tr class="empty">
+                          <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
+                        </tr>
+                      @endforelse
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-12">
+            <div class="card">
+              <div class="card-header border-0">
+                <h3 class="card-title">Top 5 Pengeluaran</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body py-0">
+                <div class="table-responsive p-0">
+                  <table class="table-bordered table-striped table-sm table">
+                    <thead>
+                      <tr>
+                        <th style="width:1%">ID</th>
+                        <th style="width:1%">Tanggal</th>
+                        <th>Akun</th>
+                        <th>Kategori</th>
+                        <th>Uraian</th>
+                        <th>Jumlah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @forelse ($data['top_expenses'] as $item)
+                        <tr>
+                          <td class="text-nowrap text-right">{{ $item->idFormatted() }}</td>
+                          <td class="text-nowrap">{{ format_date($item->date) }}</td>
+                          <td>{{ $item->account->name }}</td>
+                          <td>{{ $item->category ? $item->category->name : '-Tanpa Kategori-' }}</td>
+                          <td>{{ $item->description }}</td>
+                          <td class="{{ $item->amount > 0 ? 'text-success' : 'text-danger' }} text-right">
+                            {{ ($item->amount > 0 ? '+' : '') . format_number($item->amount) }}</td>
+                        </tr>
+                      @empty
+                        <tr class="empty">
+                          <td colspan="6">Tidak ada rekaman untuk ditampilkan.</td>
+                        </tr>
+                      @endforelse
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      @else
+        <div class="row">
+          <div clas="col-12">
+            <h5 class="m-2 mb-3">Akun belum dibuat, silahkan <a href="{{ url('cash-account/edit/0') }}">buat akun</a> terlebih dahulu.</h5>
+          </div>
+        </div>
+      @endif
     </div>
   </section>
 @endsection

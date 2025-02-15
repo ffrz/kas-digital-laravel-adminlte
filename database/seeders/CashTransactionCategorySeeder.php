@@ -20,7 +20,6 @@ namespace Database\Seeders;
 
 use App\Models\CashTransactionCategory;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
 
 class CashTransactionCategorySeeder extends Seeder
 {

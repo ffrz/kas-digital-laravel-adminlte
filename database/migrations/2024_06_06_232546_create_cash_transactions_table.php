@@ -32,7 +32,7 @@ return new class extends Migration
             $table->unsignedBigInteger('account_id');
             $table->unsignedBigInteger('category_id')->nullable()->default(null);
             $table->date('date');
-            $table->decimal('amount', 10);
+            $table->decimal('amount', 18, 0);
             $table->string('description', 100);
             $table->text('notes')->nullable()->default(null);
             $table->timestamps();

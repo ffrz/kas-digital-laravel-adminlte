@@ -32,7 +32,7 @@ return new class extends Migration
             $table->enum('type', ['bank', 'cash']);
             $table->string('name')->unique();
             $table->string('bank')->default('');
-            $table->string('bank_account_number', 20)->default('');
+            $table->string('bank_account_number', 30)->default('');
             $table->string('bank_account_name')->default('');
             $table->decimal('balance', 18, 2);
             $table->boolean('active')->default(false);

@@ -43,6 +43,10 @@ class CashAccount extends BaseModel
     {
         $accounts = CashAccount::all();
         $categories = CashTransactionCategory::all();
+        $categories->push((object)[
+            'id' => null,
+            'name' => 'Tanpa Kategori'
+        ]);
         $report = [
             'incomes' => [],
             'expenses' => [],
