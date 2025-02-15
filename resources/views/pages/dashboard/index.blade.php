@@ -5,7 +5,7 @@
 
 @section('right-menu')
   <li class="nav-item">
-    <button class="btn btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
+    <button class="btn btn-sm btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
       <i class="fa fa-filter"></i>
       <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
     </button>
@@ -56,7 +56,7 @@
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit"><i class="fas fa-check mr-2"></i> Terapkan</button>
             <button class="btn btn-default" name="action" type="submit" value="reset"><i
-                class="fa fa-filter-circle-xmark"></i> Reset Penyaringan</button>
+                class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
           </div>
         </div>
       </div>

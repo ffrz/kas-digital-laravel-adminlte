@@ -5,17 +5,17 @@
 
 @section('right-menu')
   <li class="nav-item">
-    <a href="{{ url('cash-transaction-category/edit/0') }}" class="btn plus-btn btn-primary" title="Baru">
+    <a href="{{ url('cash-transaction-category/edit/0') }}" class="btn btn-sm btn-primary" title="Baru">
       <i class="fa fa-plus"></i>
     </a>
-    <button class="btn btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
+    <button class="btn btn-sm btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
       <i class="fa fa-filter"></i>
       @if ($filter_active)
         <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
       @endif
     </button>
     <div class="btn-group">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
         <i class="fa fa-file-export"></i>
       </button>
       <div class="dropdown-menu" role="menu">
@@ -54,7 +54,7 @@
           <div class="modal-footer">
             <button class="btn btn-primary" type="submit"><i class="fas fa-check mr-2"></i> Terapkan</button>
             <button class="btn btn-default" name="action" type="submit" value="reset">
-                <i class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
+              <i class="fa fa-filter-circle-xmark mr-2"></i> Reset Penyaringan</button>
           </div>
         </div>
       </div>

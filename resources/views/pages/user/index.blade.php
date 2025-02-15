@@ -6,17 +6,17 @@
 
 @section('right-menu')
   <li class="nav-item">
-    <a href="{{ url('user/edit/0') }}" class="btn plus-btn btn-primary" title="Baru">
+    <a href="{{ url('user/edit/0') }}" class="btn btn-sm plus-btn btn-primary" title="Baru">
       <i class="fa fa-plus"></i>
     </a>
-    <button class="btn btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
+    <button class="btn btn-sm btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
       <i class="fa fa-filter"></i>
       @if ($filter_active)
         <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
       @endif
     </button>
     <div class="btn-group">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
         <i class="fa fa-file-export"></i>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
