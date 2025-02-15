@@ -7,9 +7,7 @@
   <li class="nav-item">
     <button class="btn btn-default position-relative" data-toggle="modal" data-target="#filter-dialog" title="Saring">
       <i class="fa fa-filter"></i>
-      @if ($filter_active)
-        <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
-      @endif
+      <span class="badge badge-warning position-absolute start-100 translate-middle top-0">!</span>
     </button>
   </li>
 @endSection
