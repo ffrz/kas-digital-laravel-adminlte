@@ -196,7 +196,7 @@ class CashTransaction extends BaseModel
             ->groupBy('category_id')
             ->get();
         return [
-            'labels' => $categories->map(fn($c) => $c->category->name)->toArray(),
+            'labels' => $categories->map(fn($c) => optional($c->category)->name ?? 'Tanpa Kategori')->toArray(),
             'data' => $categories->pluck('total')->toArray(),
         ];
     }
