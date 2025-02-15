@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hak Cipta (C) 2025 Fahmi Fauzi Rahman
  * Seluruh Hak Cipta Dilindungi Undang-Undang.
@@ -46,11 +47,14 @@ class CashAccountController extends Controller
         $q = CashAccount::query();
 
         if (!empty($filter['search'])) {
-            $q->where('name', 'like', '%' . $filter['search'] . '%');
-            $q->orWhere('bank', 'like', '%' . $filter['search'] . '%');
-            $q->orWhere('bank_account_name', 'like', '%' . $filter['search'] . '%');
-            $q->orWhere('bank_account_number', 'like', '%' . $filter['search'] . '%');
+            $q->where(function ($query) use ($filter) {
+                $query->where('name', 'like', '%' . $filter['search'] . '%')
+                    ->orWhere('bank', 'like', '%' . $filter['search'] . '%')
+                    ->orWhere('bank_account_name', 'like', '%' . $filter['search'] . '%')
+                    ->orWhere('bank_account_number', 'like', '%' . $filter['search'] . '%');
+            });
         }
+
         if ($filter['active'] != 'all') {
             $filter_active = true;
             $q->where('active', '=', $filter['active']);
@@ -135,7 +139,7 @@ class CashAccountController extends Controller
             $item = CashAccount::findOrFail($id);
         }
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $data = $request->all();
             $validator = Validator::make($data, [
                 'name' => 'required|unique:cash_accounts,name,' . $request->id . '|max:100',
@@ -177,10 +181,7 @@ class CashAccountController extends Controller
         }
 
         $redirect_url = 'cash-account';
-
-        if (!$item = CashAccount::find($id)) {
-            return redirect($redirect_url)->with('warning', 'Akun tidak ditemukan.');
-        }
+        $item = CashAccount::findOrFail($id);
 
         if (CashTransaction::where('account_id', $item->id)->count() > 0) {
             return redirect($redirect_url)

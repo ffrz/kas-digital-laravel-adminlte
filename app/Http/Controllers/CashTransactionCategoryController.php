@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hak Cipta (C) 2025 Fahmi Fauzi Rahman
  * Seluruh Hak Cipta Dilindungi Undang-Undang.
@@ -43,9 +44,12 @@ class CashTransactionCategoryController extends Controller
         $q = CashTransactionCategory::query();
 
         if (!empty($filter['search'])) {
-            $q->where('name', 'like', '%' . $filter['search'] . '%');
-            $q->orWhere('description', 'like', '%' . $filter['search'] . '%');
+            $q->where(function ($query) use ($filter) {
+                $query->where('name', 'like', '%' . $filter['search'] . '%')
+                    ->orWhere('description', 'like', '%' . $filter['search'] . '%');
+            });
         }
+
         if ($filter['type'] != 'all') {
             $filter_active = true;
             $q->where('type', '=', $filter['type']);
@@ -115,7 +119,7 @@ class CashTransactionCategoryController extends Controller
             return abort(403, "AKSES DITOLAK");
         }
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|unique:cash_transaction_categories,name,' . $request->id . '|max:100',
             ]);
@@ -140,12 +144,9 @@ class CashTransactionCategoryController extends Controller
             return abort(403, "AKSES DITOLAK");
         }
 
-        if (!$item = CashTransactionCategory::find($id)) {
-            $message = 'Kategori tidak ditemukan.';
-        } else if ($item->delete($id)) {
-            $message = 'Kategori ' . e($item->name) . ' telah dihapus.';
-        }
+        $item = CashTransactionCategory::findOrFail($id);
+        $item->delete();
 
-        return redirect('cash-transaction-category')->with('info', $message);
+        return redirect('cash-transaction-category')->with('info', 'Kategori ' . e($item->name) . ' telah dihapus.');
     }
 }

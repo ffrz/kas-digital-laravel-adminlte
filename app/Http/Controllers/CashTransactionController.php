@@ -122,7 +122,7 @@ class CashTransactionController extends Controller
     public function export(Request $request)
     {
         $filter = $this->getFilter($request);
-        $items = $this->getTransactions($filter, $filter_activ, false);
+        $items = $this->getTransactions($filter, $filter_active, false);
 
         if ($request->get('format') == 'pdf') {
             // Load data ke dalam tampilan PDF
@@ -195,7 +195,7 @@ class CashTransactionController extends Controller
         }
         $item->type = $item->amount < 0 ? 'expense' : 'income';
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'description' => 'required',
                 'date' => 'required',
@@ -251,7 +251,7 @@ class CashTransactionController extends Controller
         $to = new CashTransaction();
         $to->date = $from->date;
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $data = $request->all();
             $data['amount'] = abs(number_from_input($request->amount));
             if (empty($data['category_id'])) {

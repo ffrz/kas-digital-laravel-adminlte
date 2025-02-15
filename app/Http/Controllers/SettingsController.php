@@ -19,10 +19,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\AclResource;
 use App\Models\Setting;
-use App\Models\UserActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,8 +29,11 @@ class SettingsController extends Controller
 {
     public function __construct()
     {
-        ensure_user_can_access(AclResource::SETTINGS);
+        if (!Auth::user()->is_admin) {
+            return abort(403, "AKSES DITOLAK");
+        }
     }
+
 
     public function edit(Request $request)
     {
@@ -69,8 +71,6 @@ class SettingsController extends Controller
             'Old Value' => $oldValues,
             'New Value' => Setting::values(),
         ];
-
-        UserActivity::log(UserActivity::SETTINGS, 'Change Settings', 'Pengaturan telah diperbarui.', $data);
 
         return redirect('settings')->with('info', 'Pengaturan telah disimpan.');
     }

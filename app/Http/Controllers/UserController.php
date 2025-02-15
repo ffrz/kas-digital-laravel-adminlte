@@ -138,7 +138,7 @@ class UserController extends Controller
             return redirect('user')->with('warning', 'Akun <b>' . $user->username . '</b> tidak boleh diubah.');
         }
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $rules = ['fullname' => self::VALIDATION_RULE_NAME];
 
             if (!$id) {
@@ -148,14 +148,12 @@ class UserController extends Controller
                 $rules['password'] = self::VALIDATION_RULE_PASSWORD;
             }
 
-            $data = $request->validate($rules);
-
+            $data = $request->all();
+            $request->validate($rules);
             fill_with_default_value($data, ['is_active', 'is_admin'], false);
-
             if (empty($request->password)) {
                 unset($data['password']);
             }
-
             $user->fill($data);
 
             if (!$id) {
@@ -181,7 +179,7 @@ class UserController extends Controller
             return redirect('login');
         }
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $changedFields = ['fullname'];
             $rules = [
                 'fullname' => self::VALIDATION_RULE_NAME,
@@ -228,7 +226,7 @@ class UserController extends Controller
             return redirect('user')->with('error', 'Anda tidak dapat menghapus akun sendiri.');
         }
 
-        if ($request->method() == 'POST') {
+        if ($request->isMethod('post')) {
             $user->delete();
             $message = 'Akun pengguna <b>' . e($user->username) . '</b> telah dihapus.';
             return redirect('user')->with('info', $message);
