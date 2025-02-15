@@ -119,6 +119,10 @@ class CashTransactionCategoryController extends Controller
             return abort(403, "AKSES DITOLAK");
         }
 
+        if (!$item->id) {
+            $item->type = 'income';
+        }
+
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|unique:cash_transaction_categories,name,' . $request->id . '|max:100',

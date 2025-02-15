@@ -26,6 +26,6 @@ class CashTransactionCategory extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'description'
+        'name', 'description', 'type'
     ];
 }

@@ -15,6 +15,23 @@
       <div class="card card-primary">
         <div class="card-body">
           <div class="form-group">
+            <label class="col-form-label" for="type">Jenis Transaksi</label>
+            <div class="form-group clearfix">
+              <div class="icheck-primary d-inline mr-2">
+                <input id="radioPrimary1" name="type" type="radio" value="income"
+                  {{ old('type', $item->type) == 'income' ? 'checked' : '' }}>
+                <label for="radioPrimary1">Pemasukan
+                </label>
+              </div>
+              <div class="icheck-primary d-inline mr-2">
+                <input id="radioPrimary2" name="type" type="radio" value="expense"
+                  {{ old('type', $item->type) == 'expense' ? 'checked' : '' }}>
+                <label for="radioPrimary2">Pengeluaran
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
             <label for="name">Nama Kategori</label>
             <input type="text" class="form-control @error('name') is-invalid @enderror" autofocus id="name"
               placeholder="Masukkan nama kategori" name="name" value="{{ old('name', $item->name) }}">
