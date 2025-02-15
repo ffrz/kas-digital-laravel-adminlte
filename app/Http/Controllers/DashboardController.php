@@ -28,23 +28,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DashboardController extends Controller
 {
-
-    /**
-     * Fungsi untuk menerapkan filter account_id ke query transaksi
-     *
-     * @param Builder $query Query Eloquent yang akan difilter
-     * @param mixed $accountId ID akun yang ingin difilter ('all' untuk semua akun)
-     * @return Builder Query Eloquent yang sudah difilter berdasarkan account_id
-     */
-    private function applyAccountIdFilter(Builder $query, $accountId, $col = 'id'): Builder
-    {
-        if ($accountId == 'all') {
-            return $query;
-        }
-
-        return $query->where($col, $accountId);
-    }
-
     public function index(Request $request)
     {
         $filter_active = true; // set selalu true karena periode selalu aktif
