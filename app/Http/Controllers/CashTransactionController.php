@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CashTransactionController extends Controller
 {
-    private function getTransactions($filter, &$filter_active, $apply_search = true)
+    private function getTransactions($filter, &$filter_active, $apply_search = true, $paginate = true)
     {
         $q = CashTransaction::with(['account', 'category']);
         if ($filter['account_id'] > 0) {
@@ -93,7 +93,9 @@ class CashTransactionController extends Controller
             }
         }
 
-        return $q->orderBy('id', 'desc')->paginate(10);
+        $q->orderBy('id', 'desc');
+
+        return $paginate ? $q->paginate(10) : $q->get();
     }
 
     private function getFilter(Request $request)
@@ -122,7 +124,7 @@ class CashTransactionController extends Controller
     public function export(Request $request)
     {
         $filter = $this->getFilter($request);
-        $items = $this->getTransactions($filter, $filter_active, false);
+        $items = $this->getTransactions($filter, $filter_active, false, false);
 
         if ($request->get('format') == 'pdf') {
             // Load data ke dalam tampilan PDF
