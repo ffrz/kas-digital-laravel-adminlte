@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('bank_account_name')->default('');
             $table->decimal('balance', 18, 2);
             $table->boolean('active')->default(false);
-            $table->text('notes')->nullable()->default('');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
